@@ -149,3 +149,39 @@ You can also run the COCO evaluation code with:
 # Run PASCAL VOC evaluation on a trained model
 python3 fcn/fcn_run_loop.py evaluate --dataset=pascal_voc_2012 --data_dir=[dataset root directory] --model_name=[the model's name]
 ```
+
+
+## Differences from the Official Paper
+This implementation follows the FCN paper for the most part, but there are a few differences. Please let me know if I missed other important differences.
+
+ 
+
+* **Optimizer:** The paper uses SGD with momentum and weight decay. I found Adam to converge faster but at the cost of a less stable optimum. I used a learning rate of 1e-5 with weight decay of 1e-6 for all FCN versions (FCN-32s, FCN-16s and FCN-8s). I did not double the learning rate for biases in the final solution.
+
+ 
+
+* **Image Resizing:** To support training multiple images per batch we resize all images to the same size. For example, 512x512px on PASCAL VOC. As the largest side of any image is 500px, all images are center padded with zeros. In the original Caffe implementation done by the Berkeley team, the feature maps are padded or cropped to upsample them to the correct shape… The dimensions must be divisible by 32.
+
+ 
+
+* **Data Augmentation**: The original publication does not augment the data. Finding no noticeable improvement. It is not possible to prevent overfitting with the standard PASCAL VOC dataset, even with data augmentation. Some datasets provide bounding boxes and some provide masks only. To support training on multiple datasets we opted to ignore the bounding boxes that come with the dataset and generate them on the fly instead. We pick the smallest box that encapsulates all the pixels of the mask as the bounding box. This simplifies the implementation and also makes it easy to apply image augmentations that would otherwise be harder to apply to bounding boxes, such as image rotation.
+
+To validate this approach, we compared our computed bounding boxes to those provided by the COCO dataset.
+We found that ~2% of bounding boxes differed by 1px or more, ~0.05% differed by 5px or more, 
+and only 0.01% differed by 10px or more.
+
+ 
+
+ 
+
+## Citation
+Use this bibtex to cite this repository:
+```
+@misc{fmahoudeau_fcn_2019,
+  title={FCN methods for semantic image segmentation on TensorFlow},
+  author={Florent Mahoudeau},
+  year={2019},
+  publisher={Github},
+  journal={GitHub repository},
+  howpublished={\url{https://github.com/fmahoudeau/fcn}},
+}
