@@ -70,9 +70,9 @@ This section reports validation results for several datasets. 5 training experim
 |----------------------------------------------------------------|-------------|-------------|-------------|
 | [FCN-32s](results/kitty_road_fcn32s.jpg)                       | 98.1        | 97.3        | 93.8        |
 | [FCN-16s-oneoff](results/kitty_road_fcn16s_oneoff.jpg)         | 98.6        | 97.9        | 95.6        |
-| [FCN-8s-oneoff](results/kitty_road_fcn8s_oneoff.jpg)                           | 98.8        | 98.5       | 96.2       |
-| [FCN-16s-staged](results/kitty_road_fcn8s_staged.jpg)                           | 98.8        | 98.0       | 96.0       |
-| [FCN-8s-staged](results/kitty_road_fcn8s_staged.jpg)                           | 98.6        | 98.2       | 95.3       |
+| [FCN-8s-oneoff](results/kitty_road_fcn8s_oneoff.jpg)           | 98.8        | 98.5        | 96.2        |
+| [FCN-16s-staged](results/kitty_road_fcn8s_staged.jpg)          | 98.8        | 98.0        | 96.0        |
+| [FCN-8s-staged](results/kitty_road_fcn8s_staged.jpg)           | 98.6        | 98.2        | 95.3        |
 
  
 
@@ -80,17 +80,13 @@ This section reports validation results for several datasets. 5 training experim
 
  
 
-|                                                                | PixAcc   | MeanAcc     | MeanIoU     |
+|                                                                | PixAcc      | MeanAcc     | MeanIoU     |
 |----------------------------------------------------------------|-------------|-------------|-------------|
-| [FCN-32s](results/cam_vid_fcn32s.jpg)                           | 92.6        | 73.4       | 65.0       |
-
-| [FCN-16s-oneoff](results/cam_vid_fcn16s_oneoff.jpg)                           | 93.9        | 79.2       | 70.4       |
-
-| [FCN-8s-oneoff](results/cam_vid_fcn8s_oneoff.jpg)                           | 94.5        | 81.0       | 73.2       |
-
-| [FCN-16s-staged](results/cam_vid_fcn8s_staged.jpg)                           | 93.8        | 77.9       | 69.7       |
-
-| [FCN-8s-staged](results/cam_vid_fcn8s_staged.jpg)                           | 94.6        | 81.5       | 72.9       |
+| [FCN-32s](results/cam_vid_fcn32s.jpg)                          | 92.6        | 73.4        | 65.0        |
+| [FCN-16s-oneoff](results/cam_vid_fcn16s_oneoff.jpg)            | 93.9        | 79.2        | 70.4        |
+| [FCN-8s-oneoff](results/cam_vid_fcn8s_oneoff.jpg)              | 94.5        | 81.0        | 73.2        |
+| [FCN-16s-staged](results/cam_vid_fcn8s_staged.jpg)             | 93.8        | 77.9        | 69.7        |
+| [FCN-8s-staged](results/cam_vid_fcn8s_staged.jpg)              | 94.6        | 81.5        | 72.9        |
 
  
 
@@ -98,17 +94,13 @@ This section reports validation results for several datasets. 5 training experim
 
  
 
-|                                                                | PixAcc   | MeanAcc     | MeanIoU     |
+|                                                                | PixAcc      | MeanAcc     | MeanIoU     |
 |----------------------------------------------------------------|-------------|-------------|-------------|
-| [FCN-32s](results/pascal_voc_2012_fcn32s.jpg)                           | 90.7        | 69.3       | 60.0       |
-
-| [FCN-16s-oneoff](results/pascal_voc_2012_fcn16s_oneoff.jpg)                           | 91.0        | 72.9       | 61.9       |
-
-| [FCN-8s-oneoff](results/pascal_voc_2012_fcn8s_oneoff.jpg)                           | 91.1        | 73.6       | 62.5       |
-
-| [FCN-16s-staged](results/pascal_voc_2012_fcn8s_staged.jpg)                           | xx.x        | xx.x       | xx.x       |
-
-| [FCN-8s-staged](results/pascal_voc_2012_fcn8s_staged.jpg)                           | xx.x        | xx.x       | xx.x       |
+| [FCN-32s](results/pascal_voc_2012_fcn32s.jpg)                  | 90.7        | 69.3        | 60.0        |
+| [FCN-16s-oneoff](results/pascal_voc_2012_fcn16s_oneoff.jpg)    | 91.0        | 72.9        | 61.9        |
+| [FCN-8s-oneoff](results/pascal_voc_2012_fcn8s_oneoff.jpg)      | 91.1        | 73.6        | 62.5        |
+| [FCN-16s-staged](results/pascal_voc_2012_fcn8s_staged.jpg)     | xx.x        | xx.x        | xx.x        |
+| [FCN-8s-staged](results/pascal_voc_2012_fcn8s_staged.jpg)      | xx.x        | xx.x        | xx.x        |
 
  
 
@@ -116,17 +108,13 @@ This section reports validation results for several datasets. 5 training experim
 
  
 
-|                                                                | PixAcc   | MeanAcc     | MeanIoU     |
+|                                                                | PixAcc      | MeanAcc     | MeanIoU     |
 |----------------------------------------------------------------|-------------|-------------|-------------|
-| [FCN-32s](results/pascal_plus_fcn32s.jpg)                           | 91.3        | 79.3       | 64.5       |
-
-| [FCN-16s-oneoff](results/pascal_plus_fcn16s_oneoff.jpg)                           | 92.4        | 78.1       | 67.3       |
-
-| [FCN-8s-oneoff](results/pascal_plus_fcn8s_oneoff.jpg)                           | 92.6        | 77.1       | 67.5       |
-
-| [FCN-16s-staged](results/pascal_plus_fcn8s_staged.jpg)                           | 92.3        | 78.5       | 67.5       |
-
-| [FCN-8s-staged](results/pascal_plus_fcn8s_staged.jpg)                           | xx.x        | xx.x       | xx.x       |
+| [FCN-32s](results/pascal_plus_fcn32s.jpg)                      | 91.3        | 79.3        | 64.5        |
+| [FCN-16s-oneoff](results/pascal_plus_fcn16s_oneoff.jpg)        | 92.4        | 78.1        | 67.3        |
+| [FCN-8s-oneoff](results/pascal_plus_fcn8s_oneoff.jpg)          | 92.6        | 77.1        | 67.5        |
+| [FCN-16s-staged](results/pascal_plus_fcn8s_staged.jpg)         | 92.3        | 78.5        | 67.5        |
+| [FCN-8s-staged](results/pascal_plus_fcn8s_staged.jpg)          | xx.x        | xx.x        | xx.x        |
 
  
 
