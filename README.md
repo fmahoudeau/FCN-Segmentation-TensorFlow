@@ -66,16 +66,12 @@ This section reports validation results for several datasets. 5 training experim
 
  
 
-|                                                                | PixAcc   | MeanAcc     | MeanIoU     |
+|                                                                | PixAcc      | MeanAcc     | MeanIoU     |
 |----------------------------------------------------------------|-------------|-------------|-------------|
-| [FCN-32s](results/kitty_road_fcn32s.jpg)                           | 98.1        | 97.3       | 93.8       |
-
-| [FCN-16s-oneoff](results/kitty_road_fcn16s_oneoff.jpg)                           | 98.6        | 97.9       | 95.6       |
-
+| [FCN-32s](results/kitty_road_fcn32s.jpg)                       | 98.1        | 97.3        | 93.8        |
+| [FCN-16s-oneoff](results/kitty_road_fcn16s_oneoff.jpg)         | 98.6        | 97.9        | 95.6        |
 | [FCN-8s-oneoff](results/kitty_road_fcn8s_oneoff.jpg)                           | 98.8        | 98.5       | 96.2       |
-
 | [FCN-16s-staged](results/kitty_road_fcn8s_staged.jpg)                           | 98.8        | 98.0       | 96.0       |
-
 | [FCN-8s-staged](results/kitty_road_fcn8s_staged.jpg)                           | 98.6        | 98.2       | 95.3       |
 
  
