@@ -38,17 +38,11 @@ The code is documented and designed to be easy to extend for your own dataset. I
 
  
 
-* [demo.ipynb](samples/demo.ipynb) Is the easiest way to start. It shows an example of using a model pre-trained on PASCAL VOC augmented dataset to segment object classes in your own images. It includes code to run object class segmentation on arbitrary images.
-
- 
+* [demo.ipynb](demo.ipynb): This notebook is the easiest way to start. It provides an example of using a FCN model pre-trained on PASCAL VOC to segment object classes in your own images. It includes code to run object class segmentation on arbitrary images.
 
 * [data_augmentation.ipynb](fcn/data_augmentation.ipynb): This notebook visualizes the different pre-processing steps to prepare the training data. The augmentation process is built on OpenCV.
 
- 
-
 * ([fcn_run_loop.py](fcn/fcn_run_loop.py), [fcn_model.py](fcn/fcn_model.py))): These files contain the main VGG16 FCN implementation details.
-
- 
 
 * [fcn_training.ipynb](fcn/fcn_training.ipynb): This notebook reports training results for several datasets and can be used to reproduce them.
 
@@ -114,7 +108,7 @@ This section reports validation results for several datasets. 5 training experim
 | [FCN-16s-oneoff](results/pascal_plus_fcn16s_oneoff.jpg)        | 92.4        | 78.1        | 67.3        |
 | [FCN-8s-oneoff](results/pascal_plus_fcn8s_oneoff.jpg)          | 92.6        | 77.1        | 67.5        |
 | [FCN-16s-staged](results/pascal_plus_fcn8s_staged.jpg)         | 92.3        | 78.5        | 67.5        |
-| [FCN-8s-staged](results/pascal_plus_fcn8s_staged.jpg)          | xx.x        | xx.x        | xx.x        |
+| [FCN-8s-staged](results/pascal_plus_fcn8s_staged.jpg)          | 92.4        | 77.9        | 67.2        |
 
  
 
@@ -123,11 +117,7 @@ This section reports validation results for several datasets. 5 training experim
  
 
 # Training on PASCAL VOC
-I've provided pre-trained weights for the augmented PASCAL VOC dataset to make it easier to start. You can
-use those weights as a starting point to train your own variation of the network.
-Training and evaluation code is in `fcn_run_loop.py`. You can import this
-module in a Jupyter notebook (see the provided notebook for examples) or you
-can run it directly from the command line as such:
+To make it easier to start, I've provided weights pre-trained with the augmented PASCAL VOC dataset. You can use those weights as a starting point to train your own variation of the network. The training and evaluation code is in `fcn_run_loop.py`. You can import this module in a Jupyter notebook (see the provided notebook for examples) or you can run it directly from the command line as such:
 
 ```
 # Train a new model starting from pre-trained PASCAL VOC weights
@@ -152,19 +142,13 @@ python3 fcn/fcn_run_loop.py evaluate --dataset=pascal_voc_2012 --data_dir=[datas
 
 
 ## Differences from the Official Paper
-This implementation follows the FCN paper for the most part, but there are a few differences. Please let me know if I missed other important differences.
+This implementation follows the FCN paper for the most part, but there are a few differences. Please let me know if I missed anything important.
 
- 
+* **Optimizer:** The paper uses SGD with momentum and weight decay. I've used Adam with a learning rate of 1e-5 with weight decay of 1e-6 for all versions of FCN (FCN-32s, FCN-16s, FCN-8s) and both for one-off and staged training. I did not double the learning rate for biases in the final solution.
 
-* **Optimizer:** The paper uses SGD with momentum and weight decay. I found Adam to converge faster but at the cost of a less stable optimum. I used a learning rate of 1e-5 with weight decay of 1e-6 for all FCN versions (FCN-32s, FCN-16s and FCN-8s). I did not double the learning rate for biases in the final solution.
+* **Image Resizing:** To support training multiple images per batch we resize all images to the same size. For example, 512x512px on PASCAL VOC. As the largest side of any image is 500px, all images are center padded with zeros. I find this approach more convinient than having to pad or crop features after each up-sampling layer to re-instate their initial shape before the skip connection.
 
- 
-
-* **Image Resizing:** To support training multiple images per batch we resize all images to the same size. For example, 512x512px on PASCAL VOC. As the largest side of any image is 500px, all images are center padded with zeros. In the original Caffe implementation done by the Berkeley team, the feature maps are padded or cropped to upsample them to the correct shape… The dimensions must be divisible by 32.
-
- 
-
-* **Data Augmentation**: The original publication does not augment the data. Finding no noticeable improvement. It is not possible to prevent overfitting with the standard PASCAL VOC dataset, even with data augmentation. Some datasets provide bounding boxes and some provide masks only. To support training on multiple datasets we opted to ignore the bounding boxes that come with the dataset and generate them on the fly instead. We pick the smallest box that encapsulates all the pixels of the mask as the bounding box. This simplifies the implementation and also makes it easy to apply image augmentations that would otherwise be harder to apply to bounding boxes, such as image rotation.
+* **Data Augmentation**: The original publication does not augment the data. Finding no noticeable improvement. It is not possible to prevent overfitting with the standard PASCAL VOC dataset, even with data augmentation. 
 
 To validate this approach, we compared our computed bounding boxes to those provided by the COCO dataset.
 We found that ~2% of bounding boxes differed by 1px or more, ~0.05% differed by 5px or more, 
