@@ -50,43 +50,32 @@ The code is documented and designed to be easy to extend for your own dataset. I
 
 # Validation Results
 
- 
-
 This section reports validation results for several datasets. 5 training experiments are provided for each dataset: training of (1) FCN-32s, (2) FCN-16s and (3) FCN-8s from the pre-trained weights of VGG16, training of (4) FCN-16s from the pre-trained weights of FCN-32s, and (5) training of FCN-8s from the pre-trained weights of FCN-16s. The models are evaluated against standard metrics, including pixel accuracy (PixAcc), mean class accuracy (MeanAcc), and mean intersection over union (MeanIoU). All models were trained with the Adam optimizer, and the learning rate and weight decay parameters were selected using grid search.
-
  
 
 ## Kitty Road
-
- 
 
 |                                                                | PixAcc      | MeanAcc     | MeanIoU     |
 |----------------------------------------------------------------|-------------|-------------|-------------|
 | [FCN-32s](results/kitty_road_fcn32s.jpg)                       | 98.1        | 97.3        | 93.8        |
 | [FCN-16s-oneoff](results/kitty_road_fcn16s_oneoff.jpg)         | 98.6        | 97.9        | 95.6        |
-| [FCN-8s-oneoff](results/kitty_road_fcn8s_oneoff.jpg)           | 98.8        | 98.5        | 96.2        |
-| [FCN-16s-staged](results/kitty_road_fcn8s_staged.jpg)          | 98.8        | 98.0        | 96.0        |
+| [FCN-8s-oneoff](results/kitty_road_fcn8s_oneoff.jpg)           | **98.8**    | **98.5**    | **96.2**    |
+| [FCN-16s-staged](results/kitty_road_fcn8s_staged.jpg)          | **98.8**    | 98.0        | 96.0        |
 | [FCN-8s-staged](results/kitty_road_fcn8s_staged.jpg)           | 98.6        | 98.2        | 95.3        |
-
  
 
 ## Cam Vid
-
- 
 
 |                                                                | PixAcc      | MeanAcc     | MeanIoU     |
 |----------------------------------------------------------------|-------------|-------------|-------------|
 | [FCN-32s](results/cam_vid_fcn32s.jpg)                          | 92.6        | 73.4        | 65.0        |
 | [FCN-16s-oneoff](results/cam_vid_fcn16s_oneoff.jpg)            | 93.9        | 79.2        | 70.4        |
-| [FCN-8s-oneoff](results/cam_vid_fcn8s_oneoff.jpg)              | 94.5        | 81.0        | 73.2        |
+| [FCN-8s-oneoff](results/cam_vid_fcn8s_oneoff.jpg)              | 94.5        | 81.0        | **73.2**    |
 | [FCN-16s-staged](results/cam_vid_fcn8s_staged.jpg)             | 93.8        | 77.9        | 69.7        |
-| [FCN-8s-staged](results/cam_vid_fcn8s_staged.jpg)              | 94.6        | 81.5        | 72.9        |
-
+| [FCN-8s-staged](results/cam_vid_fcn8s_staged.jpg)              | **94.6**    | **81.5**    | 72.9        |
  
 
 ## PASCAL VOC 2012
-
- 
 
 |                                                                | PixAcc      | MeanAcc     | MeanIoU     |
 |----------------------------------------------------------------|-------------|-------------|-------------|
@@ -95,27 +84,19 @@ This section reports validation results for several datasets. 5 training experim
 | [FCN-8s-oneoff](results/pascal_voc_2012_fcn8s_oneoff.jpg)      | 91.1        | 73.6        | 62.5        |
 | [FCN-16s-staged](results/pascal_voc_2012_fcn8s_staged.jpg)     | xx.x        | xx.x        | xx.x        |
 | [FCN-8s-staged](results/pascal_voc_2012_fcn8s_staged.jpg)      | xx.x        | xx.x        | xx.x        |
-
  
 
 ## Augmented PASCAL VOC
-
- 
 
 |                                                                | PixAcc      | MeanAcc     | MeanIoU     |
 |----------------------------------------------------------------|-------------|-------------|-------------|
 | [FCN-32s](results/pascal_plus_fcn32s.jpg)                      | 91.3        | 79.3        | 64.5        |
 | [FCN-16s-oneoff](results/pascal_plus_fcn16s_oneoff.jpg)        | 92.4        | 78.1        | 67.3        |
-| [FCN-8s-oneoff](results/pascal_plus_fcn8s_oneoff.jpg)          | 92.6        | 77.1        | 67.5        |
-| [FCN-16s-staged](results/pascal_plus_fcn8s_staged.jpg)         | 92.3        | 78.5        | 67.5        |
+| [FCN-8s-oneoff](results/pascal_plus_fcn8s_oneoff.jpg)          | **92.6**    | 77.1        | **67.5**    |
+| [FCN-16s-staged](results/pascal_plus_fcn8s_staged.jpg)         | 92.3        | **78.5**    | **67.5**    |
 | [FCN-8s-staged](results/pascal_plus_fcn8s_staged.jpg)          | 92.4        | 77.9        | 67.2        |
 
  
-
- 
-
- 
-
 # Training on PASCAL VOC
 To make it easier to start, I've provided weights pre-trained with the augmented PASCAL VOC dataset. You can use those weights as a starting point to train your own variation of the network. The training and evaluation code is in `fcn_run_loop.py`. You can import this module in a Jupyter notebook (see the provided notebook for examples) or you can run it directly from the command line as such:
 
