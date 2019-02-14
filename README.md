@@ -50,7 +50,14 @@ The code is documented and designed to be easy to extend for your own dataset. I
 
 # Validation Results
 
-This section reports validation results for several datasets. 5 training experiments are provided for each dataset: training of (1) FCN-32s, (2) FCN-16s and (3) FCN-8s from the pre-trained weights of VGG16, training of (4) FCN-16s from the pre-trained weights of FCN-32s, and (5) training of FCN-8s from the pre-trained weights of FCN-16s. The models are evaluated against standard metrics, including pixel accuracy (PixAcc), mean class accuracy (MeanAcc), and mean intersection over union (MeanIoU). All models were trained with the Adam optimizer, and the learning rate and weight decay parameters were selected using grid search.
+This section reports validation results for several datasets on the following experiments:
+ * **One-off** end to end training of the **FCN-32s** model starting from the pre-trained weights of VGG16.
+ * **One-off** end to end training of **FCN-16s** starting from the pre-trained weights of VGG16.
+ * **One-off** end to end training of **FCN-8s** starting from the pre-trained weights of VGG16.
+ * **Staged** training of **FCN-16s** using the pre-trained weights of FCN-32s, 
+ * **Staged** training of **FCN-8s** using the pre-trained weights of FCN-16s. 
+ 
+The models are evaluated against standard metrics, including **pixel accuracy** (PixAcc), **mean class accuracy** (MeanAcc), and **mean intersection over union** (MeanIoU). All training experiments were done with the Adam optimizer. Learning rate and weight decay parameters were selected using grid search.
  
 
 ## Kitty Road
@@ -81,9 +88,9 @@ This section reports validation results for several datasets. 5 training experim
 |----------------------------------------------------------------|-------------|-------------|-------------|
 | [FCN-32s](results/pascal_voc_2012_fcn32s.jpg)                  | 90.7        | 69.3        | 60.0        |
 | [FCN-16s-oneoff](results/pascal_voc_2012_fcn16s_oneoff.jpg)    | 91.0        | 72.9        | 61.9        |
-| [FCN-8s-oneoff](results/pascal_voc_2012_fcn8s_oneoff.jpg)      | 91.1        | 73.6        | 62.5        |
-| [FCN-16s-staged](results/pascal_voc_2012_fcn8s_staged.jpg)     | xx.x        | xx.x        | xx.x        |
-| [FCN-8s-staged](results/pascal_voc_2012_fcn8s_staged.jpg)      | xx.x        | xx.x        | xx.x        |
+| [FCN-8s-oneoff](results/pascal_voc_2012_fcn8s_oneoff.jpg)      | **91.1**    | **73.6**    | **62.5**    |
+| [FCN-16s-staged](results/pascal_voc_2012_fcn8s_staged.jpg)     | **91.1**    | 72.3        | 61.9        |
+| [FCN-8s-staged](results/pascal_voc_2012_fcn8s_staged.jpg)      | 91.0        | 72.1        | 61.7        |
  
 
 ## Augmented PASCAL VOC
