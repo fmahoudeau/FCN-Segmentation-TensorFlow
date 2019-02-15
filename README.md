@@ -52,39 +52,41 @@ The models are evaluated against standard metrics, including **pixel accuracy** 
 
 ## Kitty Road
 
-[Kitty Road](http://www.cvlibs.net/datasets/kitti/eval_road.php) is a road and lane prediction task consisting of 289 training and 290 test images. As the test images are not labelled I have done a 80/20 split of the training set to evaluate the model. You will need to request a download link by going to the website. Click to download the base kit and provide an email address to receive your link.
+[Kitty Road](http://www.cvlibs.net/datasets/kitti/eval_road.php) is a road and lane prediction task consisting of 289 training and 290 test images. It belongs to the KITTI Vision Benchmark Suite. As test images are not labelled I have done a 80/20 split of the training set to evaluate the model. You will need to request a download link by going to the website. Click to download the base kit and provide an email address to receive your link.
 
 |                                                                | PixAcc      | MeanAcc     | MeanIoU     |
 |----------------------------------------------------------------|-------------|-------------|-------------|
-| [FCN-32s](results/kitty_road_fcn32s.jpg)                       | 98.1        | 97.3        | 93.8        |
-| [FCN-16s-oneoff](results/kitty_road_fcn16s_oneoff.jpg)         | 98.6        | 97.9        | 95.6        |
-| [FCN-8s-oneoff](results/kitty_road_fcn8s_oneoff.jpg)           | **98.8**    | **98.5**    | **96.2**    |
-| [FCN-16s-staged](results/kitty_road_fcn8s_staged.jpg)          | **98.8**    | 98.0        | 96.0        |
-| [FCN-8s-staged](results/kitty_road_fcn8s_staged.jpg)           | 98.6        | 98.2        | 95.3        |
+| [FCN-32s](results/kitty_road_fcn32s.png)                       | 98.1        | 97.3        | 93.8        |
+| [FCN-16s-oneoff](results/kitty_road_fcn16s_oneoff.png)         | 98.6        | 97.9        | 95.6        |
+| [FCN-8s-oneoff](results/kitty_road_fcn8s_oneoff.png)           | **98.8**    | **98.5**    | **96.2**    |
+| [FCN-16s-staged](results/kitty_road_fcn16s_staged.png)         | **98.8**    | 98.0        | 96.0        |
+| [FCN-8s-staged](results/kitty_road_fcn8s_staged.png)           | 98.6        | 98.2        | 95.3        |
  
 
-## Cam Vid
+## CamVid
 
-The [Cambridge-driving Labeled Video Database](http://mi.eng.cam.ac.uk/research/projects/VideoRec/CamVid/) (CamVid) is the first collection of videos with object class semantic labels, complete with metadata. The database provides ground truth labels that associate each pixel with one of 32 semantic classes. I have used a modified version of CamVid with 11 semantic classes and all images reshaped to 480x360. The training set has 367 images and the validation set 101 images known as [CamSeq01](http://mi.eng.cam.ac.uk/research/projects/VideoRec/CamSeq01/).
+The [Cambridge-driving Labeled Video Database](http://mi.eng.cam.ac.uk/research/projects/VideoRec/CamVid/) (CamVid) is the first collection of videos with object class semantic labels, complete with metadata. The database provides ground truth labels that associate each pixel with one of 32 semantic classes. I have used a modified version of CamVid with 11 semantic classes and all images reshaped to 480x360. The training set has 367 images, the validation set 101 images and is known as [CamSeq01](http://mi.eng.cam.ac.uk/research/projects/VideoRec/CamSeq01/).
 
 |                                                                | PixAcc      | MeanAcc     | MeanIoU     |
 |----------------------------------------------------------------|-------------|-------------|-------------|
-| [FCN-32s](results/cam_vid_fcn32s.jpg)                          | 92.6        | 73.4        | 65.0        |
-| [FCN-16s-oneoff](results/cam_vid_fcn16s_oneoff.jpg)            | 93.9        | 79.2        | 70.4        |
-| [FCN-8s-oneoff](results/cam_vid_fcn8s_oneoff.jpg)              | 94.5        | 81.0        | **73.2**    |
-| [FCN-16s-staged](results/cam_vid_fcn8s_staged.jpg)             | 93.8        | 77.9        | 69.7        |
-| [FCN-8s-staged](results/cam_vid_fcn8s_staged.jpg)              | **94.6**    | **81.5**    | 72.9        |
+| [FCN-32s](results/cam_vid_fcn32s.png)                          | 92.6        | 73.4        | 65.0        |
+| [FCN-16s-oneoff](results/cam_vid_fcn16s_oneoff.png)            | 93.9        | 79.2        | 70.4        |
+| [FCN-8s-oneoff](results/cam_vid_fcn8s_oneoff.png)              | 94.5        | 81.0        | **73.2**    |
+| [FCN-16s-staged](results/cam_vid_fcn16s_staged.png)            | 93.8        | 77.9        | 69.7        |
+| [FCN-8s-staged](results/cam_vid_fcn8s_staged.png)              | **94.6**    | **81.5**    | 72.9        |
  
 
 ## PASCAL VOC 2012
 
+The [PASCAL Visual Object Classes Challenge](http://host.robots.ox.ac.uk/pascal/VOC/voc2012/) includes a segmentation challenge with the objective of generating pixel-wise segmentations giving the class of the object visible at each pixel, or "background" otherwise. There are 20 different object classes in the dataset. It is one of the most widely used dataset for research.
+
 |                                                                | PixAcc      | MeanAcc     | MeanIoU     |
 |----------------------------------------------------------------|-------------|-------------|-------------|
-| [FCN-32s](results/pascal_voc_2012_fcn32s.jpg)                  | 90.7        | 69.3        | 60.0        |
-| [FCN-16s-oneoff](results/pascal_voc_2012_fcn16s_oneoff.jpg)    | 91.0        | 72.9        | 61.9        |
-| [FCN-8s-oneoff](results/pascal_voc_2012_fcn8s_oneoff.jpg)      | **91.1**    | **73.6**    | **62.5**    |
-| [FCN-16s-staged](results/pascal_voc_2012_fcn8s_staged.jpg)     | **91.1**    | 72.3        | 61.9        |
-| [FCN-8s-staged](results/pascal_voc_2012_fcn8s_staged.jpg)      | 91.0        | 72.1        | 61.7        |
+| [FCN-32s](results/pascal_voc_2012_fcn32s.png)                  | 90.7        | 69.3        | 60.0        |
+| [FCN-16s-oneoff](results/pascal_voc_2012_fcn16s_oneoff.png)    | 91.0        | 72.9        | 61.9        |
+| [FCN-8s-oneoff](results/pascal_voc_2012_fcn8s_oneoff.png)      | **91.1**    | **73.6**    | **62.5**    |
+| [FCN-16s-staged](results/pascal_voc_2012_fcn16s_staged.png)    | **91.1**    | 72.3        | 61.9        |
+| [FCN-8s-staged](results/pascal_voc_2012_fcn8s_staged.png)      | 91.0        | 72.1        | 61.7        |
  
 
 ## PASCAL Plus
@@ -93,11 +95,11 @@ PASCAL Plus refers to the PASCAL VOC 2012 dataset augmented with the annotations
 
 |                                                                | PixAcc      | MeanAcc     | MeanIoU     |
 |----------------------------------------------------------------|-------------|-------------|-------------|
-| [FCN-32s](results/pascal_plus_fcn32s.jpg)                      | 91.3        | 79.3        | 64.5        |
-| [FCN-16s-oneoff](results/pascal_plus_fcn16s_oneoff.jpg)        | 92.4        | 78.1        | 67.3        |
-| [FCN-8s-oneoff](results/pascal_plus_fcn8s_oneoff.jpg)          | **92.6**    | 77.1        | **68.5**    |
-| [FCN-16s-staged](results/pascal_plus_fcn8s_staged.jpg)         | 92.3        | **78.5**    | **67.5**    |
-| [FCN-8s-staged](results/pascal_plus_fcn8s_staged.jpg)          | 92.4        | 77.9        | 67.2        |
+| [FCN-32s](results/pascal_plus_fcn32s.png)                      | 91.3        | 79.3        | 64.5        |
+| [FCN-16s-oneoff](results/pascal_plus_fcn16s_oneoff.png)        | 92.4        | 78.1        | 67.3        |
+| [FCN-8s-oneoff](results/pascal_plus_fcn8s_oneoff.png)          | **92.6**    | 77.1        | **68.5**    |
+| [FCN-16s-staged](results/pascal_plus_fcn16s_staged.png)        | 92.3        | **78.5**    | **67.5**    |
+| [FCN-8s-staged](results/pascal_plus_fcn8s_staged.png)          | 92.4        | 77.9        | 67.2        |
 
  
 # Training on PASCAL VOC
