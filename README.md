@@ -1,6 +1,6 @@
 # FCN for Semantic Image Segmentation on TensorFlow
 
-This is an implementation of Fully Convolutional Networks (FCN) on Python 3 and TensorFlow achieving **68.5 mIoU** on the PASCAL VOC 2012 validation set. The model generates semantic masks for each object class in the image. It uses a VGG16 backbone. It is based on the work by E. Shelhamer, J. Long and T. Darrell available in the [PAMI FCN](https://arxiv.org/abs/1605.06211) and [CVPR FCN](https://www.cv-foundation.org/openaccess/content_cvpr_2015/html/Long_Fully_Convolutional_Networks_2015_CVPR_paper.html) papers.
+This is an implementation of Fully Convolutional Networks (FCN) on Python 3 and TensorFlow achieving **68.5 mIoU** on the PASCAL VOC 2012 validation set. The model generates semantic masks for each object class in the image using a VGG16 backbone. It is based on the work by E. Shelhamer, J. Long and T. Darrell described in the [PAMI FCN](https://arxiv.org/abs/1605.06211) and [CVPR FCN](https://www.cv-foundation.org/openaccess/content_cvpr_2015/html/Long_Fully_Convolutional_Networks_2015_CVPR_paper.html) papers.
 
 ![Semantic Segmentation Sample](assets/sample1.png)
 
