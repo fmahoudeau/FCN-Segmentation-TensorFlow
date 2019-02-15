@@ -52,7 +52,7 @@ The models are evaluated against standard metrics, including **pixel accuracy** 
 
 ## Kitty Road
 
-Kitty Road is a road and lane prediction task consisting of 289 training and 290 test images. As the test images are not labelled I have done a 80/20 split of the training set to evaluate the model. You will need to request a download link by going to the [website](http://www.cvlibs.net/datasets/kitti/eval_road.php). Click to download the base kit and provide an email address to receive your link.
+[Kitty Road](http://www.cvlibs.net/datasets/kitti/eval_road.php) is a road and lane prediction task consisting of 289 training and 290 test images. As the test images are not labelled I have done a 80/20 split of the training set to evaluate the model. You will need to request a download link by going to the website. Click to download the base kit and provide an email address to receive your link.
 
 |                                                                | PixAcc      | MeanAcc     | MeanIoU     |
 |----------------------------------------------------------------|-------------|-------------|-------------|
