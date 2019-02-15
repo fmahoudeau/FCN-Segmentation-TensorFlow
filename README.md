@@ -1,14 +1,8 @@
 # FCN for Semantic Image Segmentation on TensorFlow
 
- 
-
-This is an implementation of Fully Convolutional Networks (FCN) on Python 3 and TensorFlow. The model generates semantic masks for each object class in the image. It is based on a VGG16 backbone. The original paper by E. Shelhamer, J. Long and T. Darrell can be found on [arXiv.org](https://arxiv.org/abs/1605.06211).
-
- 
+This is an implementation of Fully Convolutional Networks (FCN) on Python 3 and TensorFlow achieving **68.5 mIoU** on the PASCAL VOC 2012 validation set. The model generates semantic masks for each object class in the image. It uses a VGG16 backbone. It is based on the work by E. Shelhamer, J. Long and T. Darrell available in the [PAMI FCN](https://arxiv.org/abs/1605.06211) and [CVPR FCN](https://www.cv-foundation.org/openaccess/content_cvpr_2015/html/Long_Fully_Convolutional_Networks_2015_CVPR_paper.html) papers.
 
 ![Semantic Segmentation Sample](assets/sample1.png)
-
- 
 
 The repository includes:
 
@@ -18,7 +12,7 @@ The repository includes:
 
 * Pre-trained weights for PASCAL VOC
 
-* Code to download the augmented PASCAL VOC 2012 dataset and prepare TRRecordDatasets for training and validation
+* Code to download the PASCAL VOC 2012 dataset and extra data from [Hariharan et al.](https://www2.eecs.berkeley.edu/Research/Projects/CS/vision/grouping/), and prepare datasets for training and validation
 
 * Data augmentation code based on OpenCV
 
@@ -28,15 +22,11 @@ The repository includes:
 
 * Evaluation of trained models for several datasets
 
- 
-
 The code is documented and designed to be easy to extend for your own dataset. If you use it in your projects, please consider citing this repository (bibtex below).
 
- 
+
 
 # Getting started
-
- 
 
 * [demo.ipynb](demo.ipynb): This notebook is the easiest way to start. It provides an example of using a FCN model pre-trained on PASCAL VOC to segment object classes in your own images. It includes code to run object class segmentation on arbitrary images.
 
@@ -54,7 +44,7 @@ This section reports validation results for several datasets on the following ex
  * **One-off** end to end training of the **FCN-32s** model starting from the pre-trained weights of VGG16.
  * **One-off** end to end training of **FCN-16s** starting from the pre-trained weights of VGG16.
  * **One-off** end to end training of **FCN-8s** starting from the pre-trained weights of VGG16.
- * **Staged** training of **FCN-16s** using the pre-trained weights of FCN-32s, 
+ * **Staged** training of **FCN-16s** using the pre-trained weights of FCN-32s.
  * **Staged** training of **FCN-8s** using the pre-trained weights of FCN-16s. 
  
 The models are evaluated against standard metrics, including **pixel accuracy** (PixAcc), **mean class accuracy** (MeanAcc), and **mean intersection over union** (MeanIoU). All training experiments were done with the Adam optimizer. Learning rate and weight decay parameters were selected using grid search.
@@ -99,7 +89,7 @@ The models are evaluated against standard metrics, including **pixel accuracy** 
 |----------------------------------------------------------------|-------------|-------------|-------------|
 | [FCN-32s](results/pascal_plus_fcn32s.jpg)                      | 91.3        | 79.3        | 64.5        |
 | [FCN-16s-oneoff](results/pascal_plus_fcn16s_oneoff.jpg)        | 92.4        | 78.1        | 67.3        |
-| [FCN-8s-oneoff](results/pascal_plus_fcn8s_oneoff.jpg)          | **92.6**    | 77.1        | **67.5**    |
+| [FCN-8s-oneoff](results/pascal_plus_fcn8s_oneoff.jpg)          | **92.6**    | 77.1        | **68.5**    |
 | [FCN-16s-staged](results/pascal_plus_fcn8s_staged.jpg)         | 92.3        | **78.5**    | **67.5**    |
 | [FCN-8s-staged](results/pascal_plus_fcn8s_staged.jpg)          | 92.4        | 77.9        | 67.2        |
 
