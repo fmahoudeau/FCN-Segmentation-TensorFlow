@@ -52,6 +52,8 @@ The models are evaluated against standard metrics, including **pixel accuracy** 
 
 ## Kitty Road
 
+Kitty Road is a road and lane prediction task consisting of 289 training and 290 test images. As the test images are not labelled I have done a 80/20 split of the training set to evaluate the model. You will need to request a download link by going to the [website](http://www.cvlibs.net/datasets/kitti/eval_road.php). Click to download the base kit and provide an email address to receive your link.
+
 |                                                                | PixAcc      | MeanAcc     | MeanIoU     |
 |----------------------------------------------------------------|-------------|-------------|-------------|
 | [FCN-32s](results/kitty_road_fcn32s.jpg)                       | 98.1        | 97.3        | 93.8        |
@@ -63,7 +65,7 @@ The models are evaluated against standard metrics, including **pixel accuracy** 
 
 ## Cam Vid
 
-I used a simplified version of CamVid with 11 object classes and all images reshaped to 360x480. The training set has xxx images and the validation set 101 images.
+The [Cambridge-driving Labeled Video Database](http://mi.eng.cam.ac.uk/research/projects/VideoRec/CamVid/) (CamVid) is the first collection of videos with object class semantic labels, complete with metadata. The database provides ground truth labels that associate each pixel with one of 32 semantic classes. I have used a modified version of CamVid with 11 semantic classes and all images reshaped to 480x360. The training set has 367 images and the validation set 101 images known as [CamSeq01](http://mi.eng.cam.ac.uk/research/projects/VideoRec/CamSeq01/).
 
 |                                                                | PixAcc      | MeanAcc     | MeanIoU     |
 |----------------------------------------------------------------|-------------|-------------|-------------|
@@ -85,7 +87,9 @@ I used a simplified version of CamVid with 11 object classes and all images resh
 | [FCN-8s-staged](results/pascal_voc_2012_fcn8s_staged.jpg)      | 91.0        | 72.1        | 61.7        |
  
 
-## Augmented PASCAL VOC
+## PASCAL Plus
+
+PASCAL Plus refers to the PASCAL VOC 2012 dataset augmented with the annotations from [Hariharan et al](https://www2.eecs.berkeley.edu/Research/Projects/CS/vision/grouping/).
 
 |                                                                | PixAcc      | MeanAcc     | MeanIoU     |
 |----------------------------------------------------------------|-------------|-------------|-------------|
