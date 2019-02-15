@@ -63,6 +63,8 @@ The models are evaluated against standard metrics, including **pixel accuracy** 
 
 ## Cam Vid
 
+I used a simplified version of CamVid with 11 object classes and all images reshaped to 360x480. The training set has xxx images and the validation set 101 images.
+
 |                                                                | PixAcc      | MeanAcc     | MeanIoU     |
 |----------------------------------------------------------------|-------------|-------------|-------------|
 | [FCN-32s](results/cam_vid_fcn32s.jpg)                          | 92.6        | 73.4        | 65.0        |
