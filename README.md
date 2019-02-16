@@ -83,9 +83,9 @@ The [PASCAL Visual Object Classes Challenge](http://host.robots.ox.ac.uk/pascal/
 |                                                                | PixAcc      | MeanAcc     | MeanIoU     |
 |----------------------------------------------------------------|-------------|-------------|-------------|
 | [FCN-32s](results/pascal_voc_2012_fcn32s.png)                  | 90.7        | 69.3        | 60.0        |
-| [FCN-16s-oneoff](results/pascal_voc_2012_fcn16s_oneoff.png)    | 91.0        | 72.9        | 61.9        |
-| [FCN-8s-oneoff](results/pascal_voc_2012_fcn8s_oneoff.png)      | **91.1**    | **73.6**    | **62.5**    |
-| [FCN-16s-staged](results/pascal_voc_2012_fcn16s_staged.png)    | **91.1**    | 72.3        | 61.9        |
+| [FCN-16s-oneoff](results/pascal_voc_2012_fcn16s_oneoff.png)    | 91.0        | **72.9**    | 61.9        |
+| [FCN-8s-oneoff](results/pascal_voc_2012_fcn8s_oneoff.png)      | **91.2**    | 72.2        | **62.5**    |
+| [FCN-16s-staged](results/pascal_voc_2012_fcn16s_staged.png)    | 91.1        | 72.3        | 61.9        |
 | [FCN-8s-staged](results/pascal_voc_2012_fcn8s_staged.png)      | 91.0        | 72.1        | 61.7        |
  
 
@@ -97,8 +97,8 @@ PASCAL Plus refers to the PASCAL VOC 2012 dataset augmented with the annotations
 |----------------------------------------------------------------|-------------|-------------|-------------|
 | [FCN-32s](results/pascal_plus_fcn32s.png)                      | 91.3        | 79.3        | 64.5        |
 | [FCN-16s-oneoff](results/pascal_plus_fcn16s_oneoff.png)        | 92.4        | 78.1        | 67.3        |
-| [FCN-8s-oneoff](results/pascal_plus_fcn8s_oneoff.png)          | **92.6**    | 77.1        | **68.5**    |
-| [FCN-16s-staged](results/pascal_plus_fcn16s_staged.png)        | 92.3        | **78.5**    | **67.5**    |
+| [FCN-8s-oneoff](results/pascal_plus_fcn8s_oneoff.png)          | **92.7**    | **78.5**    | **68.5**    |
+| [FCN-16s-staged](results/pascal_plus_fcn16s_staged.png)        | 92.3        | **78.5**    | 67.5        |
 | [FCN-8s-staged](results/pascal_plus_fcn8s_staged.png)          | 92.4        | 77.9        | 67.2        |
 
  
