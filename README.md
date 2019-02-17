@@ -102,49 +102,21 @@ PASCAL Plus refers to the PASCAL VOC 2012 dataset augmented with the annotations
 | [FCN-8s-staged](results/pascal_plus_fcn8s_staged.png)          | 92.4        | 77.9        | 67.2        |
 
  
-# Training on PASCAL VOC
-To make it easier to start, I've provided weights pre-trained with the augmented PASCAL VOC dataset. You can use those weights as a starting point to train your own variation of the network. The training and evaluation code is in `fcn_run_loop.py`. You can import this module in a Jupyter notebook (see the provided notebook for examples) or you can run it directly from the command line as such:
-
-```
-# Train a new model starting from pre-trained PASCAL VOC weights
-python3 samples/coco/coco.py train --dataset=/path/to/coco/ --model=coco
-
-# Train a new model starting from VGG16 weights
-python3 fcn/fcn_run_loop.py train --fcn_version=FCN32 --dataset=pascal_voc_2012 --data_dir=[dataset root directory] --vgg16_dir=[vgg16 weights directory] --model_name=[the model's name]  -- n_epochs=50 --optimizer=adam --learning_rate=1e-5 --weight_decay=1e-6
-
-# Continue training a model that you had trained earlier
-python3 samples/coco/coco.py train --dataset=/path/to/coco/ --model=/path/to/weights.h5
-
-# Continue training the last model you trained. This will find
-# the last trained weights in the model directory.
-python3 samples/coco/coco.py train --dataset=/path/to/coco/ --model=last
-```
-
-You can also run the COCO evaluation code with:
-```
-# Run PASCAL VOC evaluation on a trained model
-python3 fcn/fcn_run_loop.py evaluate --dataset=pascal_voc_2012 --data_dir=[dataset root directory] --model_name=[the model's name]
-```
-
 
 ## Differences from the Official Paper
 This implementation follows the FCN paper for the most part, but there are a few differences. Please let me know if I missed anything important.
 
-* **Optimizer:** The paper uses SGD with momentum and weight decay. I've used Adam with a learning rate of 1e-5 with weight decay of 1e-6 for all versions of FCN (FCN-32s, FCN-16s, FCN-8s) and both for one-off and staged training. I did not double the learning rate for biases in the final solution.
+* **Optimizer:** The paper uses SGD with momentum and weight decay. This implementation uses Adam with a learning rate of 1e-5 and weight decay of 1e-6 for all training experiments with PASCAL VOC data. I did not double the learning rate for biases in the final solution.
 
-* **Image Resizing:** To support training multiple images per batch we resize all images to the same size. For example, 512x512px on PASCAL VOC. As the largest side of any image is 500px, all images are center padded with zeros. I find this approach more convinient than having to pad or crop features after each up-sampling layer to re-instate their initial shape before the skip connection.
+* **Data Augmentation**: The authors chose not to augment the data after finding no noticeable improvement with horizontal flipping and jittering. I find that more complex transformations such as zoom, rotation and color saturation improve the learning while also reducing overfitting. However, for PASCAL VOC, I was never able to completly eliminate overfitting.
 
-* **Data Augmentation**: The original publication does not augment the data. Finding no noticeable improvement. It is not possible to prevent overfitting with the standard PASCAL VOC dataset, even with data augmentation. 
+* **Extra Data**: The train and test sets in the additional labels were merged to obtain a larger training set of 10582 images, compared to the 8498 used in the paper. The validation set has 1449 images. This larger number of training images is arguably the main reason for obtaining a better mIoU than the one reported in the second version of the paper (67.2).
 
-To validate this approach, we compared our computed bounding boxes to those provided by the COCO dataset.
-We found that ~2% of bounding boxes differed by 1px or more, ~0.05% differed by 5px or more, 
-and only 0.01% differed by 10px or more.
+* **Image Resizing:** To support training multiple images per batch we resize all images to the same size. For example, 512x512px on PASCAL VOC. As the largest side of any PASCAL VOC image is 500px, all images are center padded with zeros. I find this approach more convinient than having to pad or crop features after each up-sampling layer to re-instate their initial shape before the skip connection.
 
- 
 
- 
 
-## Citation
+# Citation
 Use this bibtex to cite this repository:
 ```
 @misc{fmahoudeau_fcn_2019,
