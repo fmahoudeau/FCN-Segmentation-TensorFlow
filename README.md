@@ -45,7 +45,7 @@ This section reports validation results for several datasets on the following ex
  * **One-off** end to end training of **FCN-16s** starting from the pre-trained weights of VGG16.
  * **One-off** end to end training of **FCN-8s** starting from the pre-trained weights of VGG16.
  * **Staged** training of **FCN-16s** using the pre-trained weights of FCN-32s.
- * **Staged** training of **FCN-8s** using the pre-trained weights of FCN-16s. 
+ * **Staged** training of **FCN-8s** using the pre-trained weights of FCN-16s-staged. 
  
 The models are evaluated against standard metrics, including **pixel accuracy** (PixAcc), **mean class accuracy** (MeanAcc), and **mean intersection over union** (MeanIoU). All training experiments were done with the Adam optimizer. Learning rate and weight decay parameters were selected using grid search.
  
