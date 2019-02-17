@@ -30,11 +30,11 @@ The code is documented and designed to be easy to extend for your own dataset. I
 
 * [demo.ipynb](demo.ipynb): This notebook is the recommended way to get started. It provides examples of using a FCN model pre-trained on PASCAL VOC to segment object classes in your own images. It includes code to run object class segmentation on arbitrary images.
 
-* [data_augmentation.ipynb](fcn/data_augmentation.ipynb): This notebook visualizes the data augmentation process using PASCAL VOC 2012 as example. Image transformations are built on OpenCV.
+* [data_augmentation.ipynb](data_augmentation.ipynb): This notebook visualizes the data augmentation process using PASCAL VOC 2012 as example. Image transformations are built on OpenCV.
 
-* ([fcn_run_loop.py](fcn/fcn_run_loop.py), [fcn_model.py](fcn/fcn_model.py))): These files contain the main VGG16 FCN implementation details.
+* ([fcn_run_loop.py](fcn_run_loop.py), [fcn_model.py](fcn_model.py))): These files contain the main VGG16 FCN implementation details.
 
-* [fcn_training.ipynb](fcn/fcn_training.ipynb): This notebook reports training results for several datasets and can be used to reproduce them on your own.
+* [fcn_training.ipynb](fcn_training.ipynb): This notebook reports training results for several datasets and can be used to reproduce them on your own.
 
  
 
