@@ -1,0 +1,165 @@
+/*
+
+    Name:       Base16 Twilight Dark
+    Author:     David Hart (http://hart-dev.com)
+
+    CodeMirror template adapted for IPython Notebook by Nikhil Sonnad (https://github.com/nsonnad/base16-ipython-notebook)
+    CodeMirror template by Jan T. Sott (https://github.com/idleberg/base16-chrome-devtools)
+    Original Base16 color scheme by Chris Kempson (https://github.com/chriskempson/base16)
+
+*/
+
+/* Uncomment to use a custom font
+div#notebook, div.CodeMirror, div.output_area pre, div.output_wrapper, div.prompt {
+  font-family: 'Custom Font Name', monospace !important;
+}
+*/
+
+
+/*Sherif's customizations*/
+
+/*Otherwise, a lot of backgrounds are white.*/
+div#notebook {background-color: #1e1e1e; border-top: none;}
+div#notebook-container {background-color: #1e1e1e;}
+
+/*Don't need to see jupyter logo, filename, last saved, etc.*/
+/*div#header-container { display: none; }*/
+
+/*This prevents scrollable output from having an ugly grey
+shadow around it*/
+div.output.output_scroll {
+    box-shadow: none;
+}
+
+/*Scroll bars*/
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    background: #484848;
+}
+::-webkit-scrollbar-thumb:window-inactive {
+	background: #484848;
+}
+
+
+/*########################*/
+
+
+/* GLOBALS */
+body {background-color: #1e1e1e;}
+a {color: #7587a6;}
+
+/* INTRO PAGE */
+.toolbar_info, .list_container {color: #c3c3c3;}
+
+/* NOTEBOOK */
+
+/* comment out this line to bring the toolbar back */
+/*div#maintoolbar, div#header {display: none !important;}*/
+
+div.input_prompt {color: #9b703f;}
+div.output_prompt {color: #9b859d;}
+div.input_area {
+  border-radius: 0px;
+  border: 1px solid #464b50;
+}
+div.output_area pre {font-weight: normal; color: #a7a7a7;}
+div.output_subarea {font-weight: normal; color: #a7a7a7;}
+
+.rendered_html table, .rendered_html th, .rendered_html tr, .rendered_html td {
+  border: 1px  #a7a7a7 solid;
+  color: #a7a7a7;
+}
+div.output_html { font-family: sans-serif; }
+table.dataframe tr {border: 1px #a7a7a7;}
+
+div.cell.selected {border-radius: 0px;}
+div.cell.edit_mode {border-radius: 0px; border: thin solid #9b859d;}
+div.text_cell_render, div.output_html {color: #a7a7a7;}
+
+span.ansiblack {color: #323537;}
+span.ansiblue {color: #afc4db;}
+span.ansigray {color: #838184;}
+span.ansigreen {color: #8f9d6a;}
+span.ansipurple {color: #9b859d;}
+span.ansired {color: #cf6a4c;}
+span.ansiyellow {color: #f9ee98;}
+
+div.output_stderr {background-color: #cf6a4c;}
+div.output_stderr pre {color: #c3c3c3;}
+
+.cm-s-ipython.CodeMirror {background: #2b2b2b; color: #c3c3c3;}
+.cm-s-ipython div.CodeMirror-selected {background: #4b4b4b !important;}
+.cm-s-ipython .CodeMirror-gutters {background: #1e1e1e; border-right: 0px;}
+.cm-s-ipython .CodeMirror-linenumber {color: #5f5a60;}kjj
+.cm-s-ipython .CodeMirror-cursor {border-left: 2px solid #838184 !important;}
+
+.CodeMirror-cursor {
+ border-left: 2px solid #42a5f5;
+ border-right: none;
+ width: 0;
+}
+
+.cm-s-ipython span.cm-comment {color: #808080;}
+.cm-s-ipython span.cm-atom {color: #94558d}
+.cm-s-ipython span.cm-number {color: #6897bb;}
+
+.cm-s-ipython span.cm-property, .cm-s-ipython span.cm-attribute {color: #a9b7c6;}
+.cm-s-ipython span.cm-keyword { font-weight: normal; color: #cc7832;}
+.cm-s-ipython span.cm-string {color: #6a8759;}
+.cm-s-ipython span.cm-operator { color: #e8bf6a;} /* Vert pour symboles % + - */
+.cm-s-ipython span.cm-builtin {color: #8888c6;}
+
+.cm-s-ipython span.cm-variable {color: #a9b7c6;}
+.cm-s-ipython span.cm-variable-2 {color: #94558d;}
+.cm-s-ipython span.cm-def {color: #cda869;}
+.cm-s-ipython span.cm-error {background: #cf6a4c; color: #838184;}
+.cm-s-ipython span.cm-bracket {color: #a7a7a7;}
+.cm-s-ipython span.cm-tag {color: #cf6a4c;}
+.cm-s-ipython span.cm-link {color: #9b859d;}
+
+/*Ajouter par mes soins*/
+.cm-s-ipython span.cm-punctuation { color: #ff0000;}
+.cm-s-ipython span.cm-positive { color: #ff0000;}
+
+.cm-s-ipython .CodeMirror-matchingbracket { font-weight: bold; background: #6b6b6b; color: #f3ec65 !important;}
+
+
+/* Pandas DataFrames */
+/* https://github.com/chris1610/pbpython/blob/master/notebooks/Ipython-pandas-tips-and-tricks.ipynb */
+table.dataframe {
+    /* These make no impact */
+    /*border-collapse: collapse;*/
+    /*border: 1px solid #464b50;*/
+    border: none;
+}
+table.dataframe tr {
+    /* Index column(s) border */
+    border: 1px solid #464b50;
+}
+table.dataframe td, table.dataframe th {
+    margin: 0;
+    border: 1px #464b50;
+    /* Text margins within cells */
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+}
+/* Columns and rows names */
+table.dataframe th:not(:empty) {
+    background-color: #3c3f41;
+    text-align: right;
+    font-weight: bold;
+}
+table.dataframe tr:nth-child(2) th:empty {
+    border-left: 1px;
+    border-right: 1px dashed #888;
+}
+table.dataframe td {
+    border: 1px solid #464b50;
+    background-color: #2b2b2b;
+}
