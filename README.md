@@ -12,7 +12,7 @@ The repository includes:
 
 * Pre-trained weights for PASCAL VOC
 
-* Code to download the PASCAL VOC 2012 dataset and extra data from [Hariharan et al.](https://www2.eecs.berkeley.edu/Research/Projects/CS/vision/grouping/), and prepare them for training and validation
+* Code to download and prepare the PASCAL VOC 2012 dataset and extra data from [Hariharan et al.](https://www2.eecs.berkeley.edu/Research/Projects/CS/vision/grouping/)
 
 * Data augmentation code based on OpenCV
 
