@@ -65,7 +65,7 @@ The models are evaluated against standard metrics, including **pixel accuracy** 
 
 ## CamVid
 
-The [Cambridge-driving Labeled Video Database](http://mi.eng.cam.ac.uk/research/projects/VideoRec/CamVid/) (CamVid) is the first collection of videos with object class semantic labels, complete with metadata. The database provides ground truth labels that associate each pixel with one of 32 semantic classes. I have used a modified version of CamVid with 11 semantic classes and all images reshaped to 480x360. The training set has 367 images, the validation set 101 images and is known as [CamSeq01](http://mi.eng.cam.ac.uk/research/projects/VideoRec/CamSeq01/). The best result of **73.2 mIoU** were also obtained with one-off training of FCN-8s.
+The [Cambridge-driving Labeled Video Database](http://mi.eng.cam.ac.uk/research/projects/VideoRec/CamVid/) (CamVid) is the first collection of videos with object class semantic labels, complete with metadata. The database provides ground truth labels that associate each pixel with one of 32 semantic classes. I have used a modified version of CamVid with 11 semantic classes and all images reshaped to 480x360. The training set has 367 images, the validation set 101 images and is known as [CamSeq01](http://mi.eng.cam.ac.uk/research/projects/VideoRec/CamSeq01/). The best result of **73.2 mIoU** was also obtained with one-off training of FCN-8s.
 
 |                                                                | PixAcc      | MeanAcc     | MeanIoU     |
 |----------------------------------------------------------------|-------------|-------------|-------------|
@@ -78,7 +78,7 @@ The [Cambridge-driving Labeled Video Database](http://mi.eng.cam.ac.uk/research/
 
 ## PASCAL VOC 2012
 
-The [PASCAL Visual Object Classes Challenge](http://host.robots.ox.ac.uk/pascal/VOC/voc2012/) includes a segmentation challenge with the objective of generating pixel-wise segmentations giving the class of the object visible at each pixel, or "background" otherwise. There are 20 different object classes in the dataset. It is one of the most widely used datasets for research. Again, the best result of **62.5 mIoU** were obtained with one-off training of FCN-8s.
+The [PASCAL Visual Object Classes Challenge](http://host.robots.ox.ac.uk/pascal/VOC/voc2012/) includes a segmentation challenge with the objective of generating pixel-wise segmentations giving the class of the object visible at each pixel, or "background" otherwise. There are 20 different object classes in the dataset. It is one of the most widely used datasets for research. Again, the best result of **62.5 mIoU** was obtained with one-off training of FCN-8s.
 
 |                                                                | PixAcc      | MeanAcc     | MeanIoU     |
 |----------------------------------------------------------------|-------------|-------------|-------------|
@@ -91,7 +91,7 @@ The [PASCAL Visual Object Classes Challenge](http://host.robots.ox.ac.uk/pascal/
 
 ## PASCAL Plus
 
-PASCAL Plus refers to the PASCAL VOC 2012 dataset augmented with the annotations from [Hariharan et al](https://www2.eecs.berkeley.edu/Research/Projects/CS/vision/grouping/). Again, the best result of **68.5 mIoU** were obtained with one-off training of FCN-8s.
+PASCAL Plus refers to the PASCAL VOC 2012 dataset augmented with the annotations from [Hariharan et al](https://www2.eecs.berkeley.edu/Research/Projects/CS/vision/grouping/). Again, the best result of **68.5 mIoU** was obtained with one-off training of FCN-8s.
 
 |                                                                | PixAcc      | MeanAcc     | MeanIoU     |
 |----------------------------------------------------------------|-------------|-------------|-------------|
