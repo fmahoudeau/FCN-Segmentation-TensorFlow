@@ -115,6 +115,45 @@ This implementation follows the FCN paper for the most part, but there are a few
 * **Image Resizing:** To support training multiple images per batch we resize all images to the same size. For example, 512x512px on PASCAL VOC. As the largest side of any PASCAL VOC image is 500px, all images are center padded with zeros. I find this approach more convinient than having to pad or crop features after each up-sampling layer to re-instate their initial shape before the skip connection.
 
 
+# Training on Your Own
+I'm providing [pre-trained weights for PASCAL Plus](https://1drv.ms/u/s!AvyZUg7UPo_CgcsElmclh43ek96oSQ) to make it easier to start. You can use those weights as a starting point to fine-tune the training on your own dataset. Training and evaluation code is in `fcn_run_loop.py`. You can import this module in Jupyter notebook (see the provided notebooks for examples). You can also perform training, evaluation and prediction  directly from the command line as such:
+
+```
+# Training a new FCN8 model starting from pre-trained VGG16 weights
+python fcn_run_loop.py train --fcn_version=FCN8 --dataset=pascal_plus --model_name=<your model's name> 
+                             --save_dir=/path/to/your/saved/models/ --data_dir=path/to/pascal/plus/data 
+                             --vgg16_weights_path=/path/to/vgg16/weights.npz --n_epochs=50
+
+# Training a new FCN16 model starting from pre-trained FCN32 weights
+python fcn_run_loop.py train --fcn_version=FCN16 --dataset=pascal_plus --model_name=<your model's name>
+                             --saved_variables=<FCN32 pre-trained weights filename w/o file extension> 
+                             --save_dir=/path/to/your/saved/models/ --data_dir=path/to/pascal/plus/data 
+                             --vgg16_weights_path=/path/to/vgg16/weights.npz --n_epochs=50
+```
+
+You can also evaluate the model with:
+```
+# Evaluate FCN8 model on PASCAL Plus validation set
+python fcn_run_loop.py evaluate --fcn_version=FCN8 --dataset=pascal_plus --model_name=<your model's name> 
+                                --saved_variables=<FCN8 pre-trained weights filename w/o file extension>
+                                --save_dir=/path/to/your/saved/models/ --data_dir=path/to/pascal/plus/data 
+                                --vgg16_weights_path=/path/to/vgg16/weights.npz
+```
+
+You can also predict the image pixel-level classes with:
+```
+# Predict PASCAL Plus validation set using an FCN8 model
+python fcn_run_loop.py predict --fcn_version=FCN8 --dataset=pascal_voc_2012 --model_name=<your model's name>
+                               --saved_variables=<FCN8 pre-trained weights filename w/o file extension>
+                               --save_dir=/path/to/your/saved/models/ --data_dir=path/to/pascal/plus/data 
+                               --vgg16_weights_path=/path/to/vgg16/weights.npz
+```
+
+To find out about the other command line arguments type: 
+```
+python fcn_run_loop.py --help
+```
+
 
 # Citation
 Use this bibtex to cite this repository:
