@@ -140,7 +140,7 @@ python fcn_run_loop.py evaluate --fcn_version=FCN8 --dataset=pascal_plus --model
                                 --vgg16_weights_path=/path/to/vgg16/weights.npz
 ```
 
-You can also predict the image pixel-level classes with:
+You can also predict the images' pixel-level object classes. This command creates a sub-folder under your `save_dir` and saves all images of the validation set with their segmentation mask overlayed:
 ```
 # Predict PASCAL Plus validation set using an FCN8 model
 python fcn_run_loop.py predict --fcn_version=FCN8 --dataset=pascal_voc_2012 --model_name=<your model's name>
