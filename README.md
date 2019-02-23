@@ -170,7 +170,7 @@ python kitty_road_dataset.py --data_dir=<path to data_road.zip>
 ```
 
 ### Cam Vid
-I'm providing a [prepared version of CamVid](https://1drv.ms/u/s!AvyZUg7UPo_CgcsElmclh43ek96oSQ) with 11 object classes. You can also go to the [Cambridge-driving Labeled Video Database](http://mi.eng.cam.ac.uk/research/projects/VideoRec/CamVid/) to make your own.
+I'm providing a [prepared version of CamVid](https://1drv.ms/u/s!APyZUg7UPo_CgcsF) with 11 object classes. You can also go to the [Cambridge-driving Labeled Video Database](http://mi.eng.cam.ac.uk/research/projects/VideoRec/CamVid/) to make your own.
 
 ```
 # Unzip and prepare TFRecordDatasets 
