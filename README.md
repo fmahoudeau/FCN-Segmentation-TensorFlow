@@ -106,7 +106,7 @@ PASCAL Plus refers to the PASCAL VOC 2012 dataset augmented with the annotations
 # Differences from the Official Paper
 This implementation follows the FCN paper for the most part, but there are a few differences. Please let me know if I missed anything important.
 
-* **Optimizer:** The paper uses SGD with momentum and weight decay. This implementation uses Adam with a learning rate of 1e-5 and weight decay of 1e-6 for all training experiments with PASCAL VOC data. I did not double the learning rate for biases in the final solution.
+* **Optimizer:** The paper uses SGD with momentum and weight decay. This implementation uses Adam with a batch size of 12 images, a learning rate of 1e-5 and weight decay of 1e-6 for all training experiments with PASCAL VOC data. I did not double the learning rate for biases in the final solution.
 
 * **Data Augmentation**: The authors chose not to augment the data after finding no noticeable improvement with horizontal flipping and jittering. I find that more complex transformations such as zoom, rotation and color saturation improve the learning while also reducing overfitting. However, for PASCAL VOC, I was never able to completly eliminate overfitting.
 
