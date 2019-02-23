@@ -35,9 +35,9 @@ Hariharan et al. Semantic contours from inverse detectors. ICCV 2011.
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--contours_dir',
-                    default='G:/Datasets/pascal_plus_data/benchmark_RELEASE/dataset/')
-parser.add_argument('--voc_dir', default='G:/Datasets/pascal_voc_data/VOCdevkit/VOC2012/')
-parser.add_argument('--vocplus_dir', default='G:/Datasets/pascal_plus_data/prepared',
+                    default='/tmp/pascal_plus_data/benchmark_RELEASE/dataset/')
+parser.add_argument('--voc_dir', default='/tmp/pascal_voc_data/VOCdevkit/VOC2012/')
+parser.add_argument('--vocplus_dir', default='/tmp/pascal_plus_data/prepared',
                     help='This folder will be created')
 parser.add_argument('--val_split', default=0., type=float, help='Percentage of samples to use for validation')
 parser.add_argument('--force_gen', dest='force_gen', action='store_true')
@@ -223,15 +223,15 @@ def main(_):
         2. Export the dataset to TFRecords, one for the training set and
         another one for the validation set
     """
-    dataset = PascalPlusDataset()
-    dataset.prepare(FLAGS.voc_dir, FLAGS.vocplus_dir, FLAGS.contours_dir,
+    dataset = PascalPlusDataset(augmentation_params=None)
+    dataset.prepare(FLAGS.voc_dir, FLAGS.contours_dir, FLAGS.vocplus_dir,
                     FLAGS.val_split, FLAGS.force_gen, FLAGS.copy)
 
     print(FLAGS.vocplus_dir)
-    train_basenames = dataset.load_basenames('train', FLAGS.vocplus_dir)
+    train_basenames = dataset.get_basenames('train', FLAGS.vocplus_dir)
     print('Found', len(train_basenames), 'training samples')
 
-    val_basenames = dataset.load_basenames('test', FLAGS.vocplus_dir)
+    val_basenames = dataset.get_basenames('test', FLAGS.vocplus_dir)
     print('Found', len(val_basenames), 'test samples')
 
     # Encode and save sparse ground truth segmentation image labels
