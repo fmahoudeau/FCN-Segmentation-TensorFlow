@@ -52,7 +52,7 @@ The models are evaluated against standard metrics, including **pixel accuracy** 
 
 ## Kitty Road
 
-[Kitty Road](http://www.cvlibs.net/datasets/kitti/eval_road.php) is a road and lane prediction task consisting of 289 training and 290 test images. It belongs to the KITTI Vision Benchmark Suite. As test images are not labelled, 20% of the images in the training set have been isolated to evaluate the model. The best result of **96.2 mIoU** was obtained with one-off training of FCN-8s. To obtain the dataset, click to download the base kit and provide an email address to receive your download link.
+Kitty Road is a road and lane prediction task consisting of 289 training and 290 test images. It belongs to the KITTI Vision Benchmark Suite. As test images are not labelled, 20% of the images in the training set have been isolated to evaluate the model. The best result of **96.2 mIoU** was obtained with one-off training of FCN-8s. 
 
 |                                                                | PixAcc      | MeanAcc     | MeanIoU     |
 |----------------------------------------------------------------|-------------|-------------|-------------|
@@ -65,7 +65,7 @@ The models are evaluated against standard metrics, including **pixel accuracy** 
 
 ## CamVid
 
-The [Cambridge-driving Labeled Video Database](http://mi.eng.cam.ac.uk/research/projects/VideoRec/CamVid/) (CamVid) is the first collection of videos with object class semantic labels, complete with metadata. The database provides ground truth labels that associate each pixel with one of 32 semantic classes. I have used a modified version of CamVid with 11 semantic classes and all images reshaped to 480x360. The training set has 367 images, the validation set 101 images and is known as [CamSeq01](http://mi.eng.cam.ac.uk/research/projects/VideoRec/CamSeq01/). The best result of **73.2 mIoU** was also obtained with one-off training of FCN-8s.
+The Cambridge-driving Labeled Video Database (CamVid) is the first collection of videos with object class semantic labels, complete with metadata. The database provides ground truth labels that associate each pixel with one of 32 semantic classes. I have used a modified version of CamVid with 11 semantic classes and all images reshaped to 480x360. The training set has 367 images, the validation set 101 images and is known as [CamSeq01](http://mi.eng.cam.ac.uk/research/projects/VideoRec/CamSeq01/). The best result of **73.2 mIoU** was also obtained with one-off training of FCN-8s.
 
 |                                                                | PixAcc      | MeanAcc     | MeanIoU     |
 |----------------------------------------------------------------|-------------|-------------|-------------|
@@ -152,6 +152,37 @@ python fcn_run_loop.py predict --fcn_version=FCN8 --dataset=pascal_voc_2012 --mo
 To find out about the other command line arguments type: 
 ```
 python fcn_run_loop.py --help
+```
+
+
+## Requirements
+Python 3.6, TensorFlow 1.12, OpenCV, and other common packages listed in `environment.yml`.
+
+
+## Datasets
+
+### Kitty Road
+To train or test on the Kitty Road dataset go to [Kitty Road](http://www.cvlibs.net/datasets/kitti/eval_road.php) and click to download the base kit. Provide an email address to receive your download link.
+
+```
+# Unzip and prepare TFRecordDatasets 
+python kitty_road_dataset.py --data_dir=<path to data_road.zip>
+```
+
+### Cam Vid
+I'm providing a [prepared version of CamVid](https://1drv.ms/u/s!AvyZUg7UPo_CgcsElmclh43ek96oSQ) with 11 object classes. You can also go to the [Cambridge-driving Labeled Video Database](http://mi.eng.cam.ac.uk/research/projects/VideoRec/CamVid/) to make your own.
+
+```
+# Unzip and prepare TFRecordDatasets 
+python cam_vid_dataset.py --data_dir=<path to cam_vid_prepped.zip>
+```
+
+### Pascal VOC
+To train or test on PASCAL VOC 2012 and the augmented dataset, use the provided scripts:
+
+```
+# Unzip and prepare TFRecordDatasets 
+python cam_vid_dataset.py --data_dir=<path to cam_vid_prepped.zip>
 ```
 
 
