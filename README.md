@@ -52,7 +52,7 @@ The models are evaluated against standard metrics, including **pixel accuracy** 
 
 ## Kitty Road
 
-[Kitty Road](http://www.cvlibs.net/datasets/kitti/eval_road.php) is a road and lane prediction task consisting of 289 training and 290 test images. It belongs to the KITTI Vision Benchmark Suite. As test images are not labelled, 20% of the images in the training set have been isolated to evaluate the model. The best result of **96.2 mIoU** was obtained with one-off training of FCN-8s. To obtain the dataset, click to download the base kit and provide an email address to receive your download link.
+Kitty Road is a road and lane prediction task consisting of 289 training and 290 test images. It belongs to the KITTI Vision Benchmark Suite. As test images are not labelled, 20% of the images in the training set have been isolated to evaluate the model. The best result of **96.2 mIoU** was obtained with one-off training of FCN-8s. 
 
 |                                                                | PixAcc      | MeanAcc     | MeanIoU     |
 |----------------------------------------------------------------|-------------|-------------|-------------|
@@ -65,7 +65,7 @@ The models are evaluated against standard metrics, including **pixel accuracy** 
 
 ## CamVid
 
-The [Cambridge-driving Labeled Video Database](http://mi.eng.cam.ac.uk/research/projects/VideoRec/CamVid/) (CamVid) is the first collection of videos with object class semantic labels, complete with metadata. The database provides ground truth labels that associate each pixel with one of 32 semantic classes. I have used a modified version of CamVid with 11 semantic classes and all images reshaped to 480x360. The training set has 367 images, the validation set 101 images and is known as [CamSeq01](http://mi.eng.cam.ac.uk/research/projects/VideoRec/CamSeq01/). The best result of **73.2 mIoU** was also obtained with one-off training of FCN-8s.
+The Cambridge-driving Labeled Video Database (CamVid) is the first collection of videos with object class semantic labels, complete with metadata. The database provides ground truth labels that associate each pixel with one of 32 semantic classes. I have used a modified version of CamVid with 11 semantic classes and all images reshaped to 480x360. The training set has 367 images, the validation set 101 images and is known as [CamSeq01](http://mi.eng.cam.ac.uk/research/projects/VideoRec/CamSeq01/). The best result of **73.2 mIoU** was also obtained with one-off training of FCN-8s.
 
 |                                                                | PixAcc      | MeanAcc     | MeanIoU     |
 |----------------------------------------------------------------|-------------|-------------|-------------|
@@ -106,7 +106,7 @@ PASCAL Plus refers to the PASCAL VOC 2012 dataset augmented with the annotations
 # Differences from the Official Paper
 This implementation follows the FCN paper for the most part, but there are a few differences. Please let me know if I missed anything important.
 
-* **Optimizer:** The paper uses SGD with momentum and weight decay. This implementation uses Adam with a learning rate of 1e-5 and weight decay of 1e-6 for all training experiments with PASCAL VOC data. I did not double the learning rate for biases in the final solution.
+* **Optimizer:** The paper uses SGD with momentum and weight decay. This implementation uses Adam with a batch size of 12 images, a learning rate of 1e-5 and weight decay of 1e-6 for all training experiments with PASCAL VOC data. I did not double the learning rate for biases in the final solution.
 
 * **Data Augmentation**: The authors chose not to augment the data after finding no noticeable improvement with horizontal flipping and jittering. I find that more complex transformations such as zoom, rotation and color saturation improve the learning while also reducing overfitting. However, for PASCAL VOC, I was never able to completly eliminate overfitting.
 
@@ -114,6 +114,91 @@ This implementation follows the FCN paper for the most part, but there are a few
 
 * **Image Resizing:** To support training multiple images per batch we resize all images to the same size. For example, 512x512px on PASCAL VOC. As the largest side of any PASCAL VOC image is 500px, all images are center padded with zeros. I find this approach more convinient than having to pad or crop features after each up-sampling layer to re-instate their initial shape before the skip connection.
 
+
+# Training on Your Own
+I'm providing [pre-trained weights for PASCAL Plus](https://1drv.ms/u/s!AvyZUg7UPo_CgcsElmclh43ek96oSQ) to make it easier to start. You can use those weights as a starting point to fine-tune the training on your own dataset. Training and evaluation code is in `fcn_run_loop.py`. You can import this module in Jupyter notebook (see the provided notebooks for examples). You can also perform training, evaluation and prediction  directly from the command line as such:
+
+```
+# Training a new FCN8 model starting from pre-trained VGG16 weights
+python fcn_run_loop.py train --fcn_version=FCN8 --dataset=pascal_plus --model_name=<your model's name> 
+                             --save_dir=/path/to/your/saved/models/ --data_dir=path/to/pascal/plus/data 
+                             --vgg16_weights_path=/path/to/vgg16/weights.npz --n_epochs=50
+
+# Training a new FCN16 model starting from pre-trained FCN32 weights
+python fcn_run_loop.py train --fcn_version=FCN16 --dataset=pascal_plus --model_name=<your model's name>
+                             --saved_variables=<FCN32 pre-trained weights filename w/o file extension> 
+                             --save_dir=/path/to/your/saved/models/ --data_dir=path/to/pascal/plus/data 
+                             --vgg16_weights_path=/path/to/vgg16/weights.npz --n_epochs=50
+```
+
+You can also evaluate the model with:
+```
+# Evaluate FCN8 model on PASCAL Plus validation set
+python fcn_run_loop.py evaluate --fcn_version=FCN8 --dataset=pascal_plus --model_name=<your model's name> 
+                                --saved_variables=<FCN8 pre-trained weights filename w/o file extension>
+                                --save_dir=/path/to/your/saved/models/ --data_dir=path/to/pascal/plus/data 
+                                --vgg16_weights_path=/path/to/vgg16/weights.npz
+```
+
+You can also predict the images' pixel-level object classes. This command creates a sub-folder under your `save_dir` and saves all images of the validation set with their segmentation mask overlayed:
+```
+# Predict PASCAL Plus validation set using an FCN8 model
+python fcn_run_loop.py predict --fcn_version=FCN8 --dataset=pascal_voc_2012 --model_name=<your model's name>
+                               --saved_variables=<FCN8 pre-trained weights filename w/o file extension>
+                               --save_dir=/path/to/your/saved/models/ --data_dir=path/to/pascal/plus/data 
+                               --vgg16_weights_path=/path/to/vgg16/weights.npz
+```
+
+To find out about the other command line arguments type: 
+```
+python fcn_run_loop.py --help
+```
+
+
+## Requirements
+Python 3.6, TensorFlow 1.12, OpenCV, and other common packages listed in `environment.yml`.
+
+
+## Datasets
+
+### Kitty Road
+To train or test on the Kitty Road dataset go to [Kitty Road](http://www.cvlibs.net/datasets/kitti/eval_road.php) and click to download the base kit. Provide an email address to receive your download link.
+
+```
+# Unzip and prepare TFRecordDatasets 
+python kitty_road_dataset.py --data_dir=<path to data_road.zip>
+```
+
+### Cam Vid
+I'm providing a [prepared version of CamVid](https://1drv.ms/u/s!AvyZUg7UPo_CgcsElmclh43ek96oSQ) with 11 object classes. You can also go to the [Cambridge-driving Labeled Video Database](http://mi.eng.cam.ac.uk/research/projects/VideoRec/CamVid/) to make your own.
+
+```
+# Unzip and prepare TFRecordDatasets 
+python cam_vid_dataset.py --data_dir=<path to cam_vid_prepped.zip>
+```
+
+### Pascal VOC
+To train or test on PASCAL VOC 2012 and the augmented dataset, use the provided scripts:
+
+```
+# Create the destination folder
+mkdir /path/to/pascal_voc_data
+
+# Download the dataset
+python pascal_voc_downloader.py --data_dir=</path/to/pascal_voc_data>
+
+# Untar and prepare TFRecordDatasets 
+python pascal_voc_dataset.py --data_dir=</path/to/pascal_voc_data/VOCdevkit/VOC2012>
+
+# Repeat the same steps for the additional annotations
+mkdir /path/to/pascal_plus_data
+
+python pascal_plus_downloader.py --data_dir=</path/to/pascal_plus_data>
+
+python pascal_plus_dataset.py --contours_dir=</path/to/pascal_plus_data/benchmark_RELEASE/dataset/>
+                              --voc_dir=</path/to/pascal_voc_data/VOCdevkit/VOC2012/>
+                              --vocplus_dir=</path/to/pascal_plus_data/prepared>
+```
 
 
 # Citation
