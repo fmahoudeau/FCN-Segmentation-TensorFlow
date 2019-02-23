@@ -336,7 +336,7 @@ def main(_):
         1. Converts ground truth segmentation classes to sparse labels.
         2. Export the dataset to TFRecords, one for the training set and another one for the validation set.
     """
-    dataset = PascalVOC2012Dataset()
+    dataset = PascalVOC2012Dataset(augmentation_params=None)
     train_basenames = dataset.get_basenames('train', FLAGS.data_dir)
     print('Found', len(train_basenames), 'training samples')
 
@@ -358,3 +358,4 @@ def main(_):
 if __name__ == '__main__':
     FLAGS, unparsed = parser.parse_known_args()
     tf.app.run(argv=[sys.argv[0]] + unparsed)
+
