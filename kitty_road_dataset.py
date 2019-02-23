@@ -13,12 +13,12 @@
 # limitations under the License.
 # ==============================================================================
 
-import sys, shutil, glob, random
+import sys, shutil, glob
 import argparse
 import os.path
 from datetime import datetime
 import numpy as np
-import matplotlib.pyplot as plt
+import zipfile
 import tensorflow as tf
 
 from dataset import Dataset
@@ -37,6 +37,12 @@ GT_SPARSE_PATH = 'training/gt_sparse_2'
 
 TRAIN_SHARE = 0.8
 
+parser = argparse.ArgumentParser()
+
+parser.add_argument(
+    '--data_dir', type=str, default='/tmp/kitty_road_data/',
+    help='Directory where the data is located')
+
 
 class KittyRoadDataset(Dataset):
     """Base class for building the FCN model."""
@@ -54,7 +60,17 @@ class KittyRoadDataset(Dataset):
         self.cmap = [[255, 0, 0], [255, 0, 255], [0, 0, 0]]
         assert len(self.cmap) == (self.n_classes + 1), 'Invalid number of colors in cmap'
 
-    def load_basenames(self, is_training, dataset_path):
+    def extract_dataset(self, data_dir):
+        if not os.path.exists(os.path.join(data_dir, TRAIN_IM_PATH, 'um_000000.png')):
+            print('Extracting zip...')
+            zip_ref = zipfile.ZipFile(os.path.join(data_dir, 'data_road.zip'), 'r')
+            zip_ref.extractall(data_dir)
+            zip_ref.close()
+        else:
+            print('Zip already extracted')
+        print('Finished extracting')
+
+    def get_basenames(self, is_training, dataset_path):
         """
         Loads a list of images base names that have been labelled for semantic segmentation.
         For the training set, returns a list of tuples with the image and ground truth file names.
@@ -92,7 +108,7 @@ class KittyRoadDataset(Dataset):
         :return: None
         """
         # Load the list of image base names
-        basenames = self.load_basenames(is_training=True, dataset_path=dataset_path)
+        basenames = self.get_basenames(is_training=True, dataset_path=dataset_path)
 
         gt_path = os.path.join(dataset_path, TRAIN_GT_PATH)
         gt_sparse_path = os.path.join(dataset_path, GT_SPARSE_PATH)
@@ -190,6 +206,8 @@ class KittyRoadDataset(Dataset):
         """Returns a TFRecordDataset for the requested dataset."""
         data_path = os.path.join(data_dir, 'training/TFRecords',
                                  'segmentation_{}.tfrecords'.format('train' if is_training else 'test'))
+        if not os.path.exists(data_path):
+            raise ValueError('Check dataset path: {}'.format(data_path))
         dataset = tf.data.TFRecordDataset(data_path)
 
         # Prefetches a batch at a time to smooth out the time taken to load input
@@ -258,3 +276,33 @@ class KittyRoadDataset(Dataset):
                     idx += 1
             except tf.errors.OutOfRangeError:
                 break
+
+
+def main(_):
+    """Export the Kitty Road segmentation dataset to TFRecords."""
+    
+    dataset = KittyRoadDataset(augmentation_params=None)
+
+    if not os.path.exists(os.path.join(FLAGS.data_dir, 'data_road.zip')):
+        raise ValueError('Dataset zip file not found: {}'.format(
+            os.path.join(FLAGS.data_dir, 'data_road.zip')))
+    dataset.extract_dataset(FLAGS.data_dir)
+
+    dataset_path = os.path.join(FLAGS.data_dir, 'data_road')
+    basenames = dataset.get_basenames(True, dataset_path)
+    print('Found', len(basenames), 'training samples')
+
+    train_basenames, test_basenames = dataset.train_test_split(basenames, TRAIN_SHARE)
+
+    print('Exporting ground truth images to sparse labels...')
+    dataset.export_sparse_encoding(dataset_path)
+
+    # Export train and test datasets to TFRecords
+    dataset.export_tfrecord(train_basenames, dataset_path, 'segmentation_train.tfrecords')
+    dataset.export_tfrecord(test_basenames, dataset_path, 'segmentation_test.tfrecords')
+    print('Finished exporting')
+
+
+if __name__ == '__main__':
+    FLAGS, unparsed = parser.parse_known_args()
+    tf.app.run(argv=[sys.argv[0]] + unparsed)
