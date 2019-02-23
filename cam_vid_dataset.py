@@ -19,6 +19,7 @@ import os.path
 from datetime import datetime
 import numpy as np
 import tensorflow as tf
+import zipfile
 
 from dataset import Dataset
 from image_utils import (imread, imwrite, bytesread,
@@ -67,7 +68,17 @@ class CamVidDataset(Dataset):
             (0,     0, 142),  # Pedestrian
             (119,  11,  32),  # Bicycle
             (0,    80, 100)]) # Ignore/void
-        assert len(self.cmap) == (self.n_classes + 1), 'Invalid number of colors in cmap'
+        assert len(self.cmap) == (self.n_classes+1), 'Invalid number of colors in cmap'
+
+    def extract_dataset(self, data_dir):
+        if not os.path.exists(os.path.join(data_dir, TRAIN_IM_PATH, '0001TP_006690.png')):
+            print('Extracting zip...')
+            zip_ref = zipfile.ZipFile(os.path.join(data_dir, 'cam_vid_prepped.zip'), 'r')
+            zip_ref.extractall(data_dir)
+            zip_ref.close()
+        else:
+            print('Zip already extracted')
+        print('Finished extracting')
 
     def get_basenames(self, is_training, dataset_path):
         """
@@ -228,19 +239,25 @@ class CamVidDataset(Dataset):
 
 
 def main(_):
-    """
-    Export the CAM VID segmentation dataset to TFRecords:
-    """
-    dataset = CamVidDataset()
-    train_basenames = dataset.get_basenames(True, FLAGS.data_dir)
+    """Export the CAM VID segmentation dataset to TFRecords."""
+
+    dataset = CamVidDataset(augmentation_params=None)
+
+    if not os.path.exists(os.path.join(FLAGS.data_dir, 'cam_vid_prepped.zip')):
+        raise ValueError('Dataset zip file not found: {}'.format(
+            os.path.join(FLAGS.data_dir, 'cam_vid_prepped.zip')))
+    dataset.extract_dataset(FLAGS.data_dir)
+
+    dataset_path = os.path.join(FLAGS.data_dir, 'cam_vid')
+    train_basenames = dataset.get_basenames(True, dataset_path)
     print('Found', len(train_basenames), 'training samples')
 
-    val_basenames = dataset.get_basenames(False, FLAGS.data_dir)
+    val_basenames = dataset.get_basenames(False, dataset_path)
     print('Found', len(val_basenames), 'validation samples')
 
     # Export train and validation datasets to TFRecords
-    dataset.export_tfrecord(True, FLAGS.data_dir, 'segmentation_train.tfrecords')
-    dataset.export_tfrecord(False, FLAGS.data_dir, 'segmentation_val.tfrecords')
+    dataset.export_tfrecord(True, dataset_path, 'segmentation_train.tfrecords')
+    dataset.export_tfrecord(False, dataset_path, 'segmentation_val.tfrecords')
     print('Finished exporting')
 
 
