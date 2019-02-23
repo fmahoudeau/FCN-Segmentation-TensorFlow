@@ -31,7 +31,6 @@ def _bilinear_initializer(n_channels, kernel_size, cross_channel=False):
 
     :return: A tf.constant_initializer with the weight initialized to bilinear interpolation.
     """
-
     # Make a 2D bilinear kernel suitable for up-sampling of the given (h, w) size.
     upscale_factor = (kernel_size+1)//2
     if kernel_size % 2 == 1:
@@ -66,7 +65,6 @@ class Model(object):
         :param n_classes: The number of semantic classes, excluding the void/ignore class.
         :param vgg16_weights_path: The filename path to the pre-trained VGG16 numpy weights.
         """
-
         if len(image_shape) != 2:
             raise ValueError('Parameter image_shape must be 2D. Got {} dimensions.'.format(len(image_shape)))
         if not os.path.isfile(vgg16_weights_path):
@@ -87,7 +85,6 @@ class Model(object):
 
         :return: None
         """
-
         builder = tf.saved_model.Builder(model_path)
         builder.add_meta_graph_and_variables(tf.get_default_session(), tags)
         builder.save()
@@ -143,7 +140,6 @@ class Model(object):
 
     def __call__(self, model_name, saved_model=None, saved_variables=None):
         """
-
         :param model_name: The name of the model to create, one of FCN32, FCN16 or FCN8.
         :param saved_model: Optional 2-keys dictionary to restore a model variables and operations:
             1. 'model_path' is the path to the model's protobuf file.
@@ -161,7 +157,7 @@ class Model(object):
         # Create a FCN model, restoring VGG16 pre-trained weights or FCN32/FCN16
         # pre-trained weights in case of staged training of respectively FCN16/FCN8.
         if saved_model is None:
-            print('Building {} for end-to-end training...'.format(model_name))
+            print('Building {} model...'.format(model_name))
             self.inputs = tf.placeholder(tf.float32, [None, *self.image_shape, 3], name='inputs')
             self.labels = tf.placeholder(tf.float32, [None, *self.image_shape], name='labels')
             self.keep_prob = tf.placeholder(tf.float32, shape=[], name='keep_prob')
@@ -183,7 +179,7 @@ class Model(object):
                 self.outputs = self._fcn_8()
         # Load a pre-trained model graph and its weights to resume training or for inference.
         else:
-            print('Loading {}...'.format(model_name))
+            print('Loading {} model...'.format(model_name))
             if model_name not in saved_model['tags']:  # Ensure the model being loaded is the one expected
                 raise ValueError(
                     'Invalid model tags. Expected {}, but got {}.'.format(model_name, str(saved_model['tags'])))
@@ -221,11 +217,9 @@ class Model(object):
 
         :return: The last layer of the base network, ie. the convolutionized version of `fc7`.
         """
-        # TODO: create a layers dictionary
         weights = np.load(self.vgg16_weights_path)
 
         # Subtract the mean RGB value, computed on the VGG16 training set, from each pixel
-        # TODO: remove the mean before padding
         with tf.name_scope('preprocess') as scope:
             mean = tf.constant([123.68, 116.779, 103.939], dtype=tf.float32,
                                shape=[1, 1, 1, 3], name='img_mean')
