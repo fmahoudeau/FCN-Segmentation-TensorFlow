@@ -181,8 +181,23 @@ python cam_vid_dataset.py --data_dir=<path to cam_vid_prepped.zip>
 To train or test on PASCAL VOC 2012 and the augmented dataset, use the provided scripts:
 
 ```
-# Unzip and prepare TFRecordDatasets 
-python cam_vid_dataset.py --data_dir=<path to cam_vid_prepped.zip>
+# Create the destination folder
+mkdir /path/to/pascal_voc_data
+
+# Download the dataset
+python pascal_voc_downloader.py --data_dir=</path/to/pascal_voc_data>
+
+# Untar and prepare TFRecordDatasets 
+python pascal_voc_dataset.py --data_dir=</path/to/pascal_voc_data/VOCdevkit/VOC2012>
+
+# Repeat the same steps for the additional annotations
+mkdir /path/to/pascal_plus_data
+
+python pascal_plus_downloader.py --data_dir=</path/to/pascal_plus_data>
+
+python pascal_plus_dataset.py --contours_dir=</path/to/pascal_plus_data/benchmark_RELEASE/dataset/>
+                              --voc_dir=</path/to/pascal_voc_data/VOCdevkit/VOC2012/>
+                              --vocplus_dir=</path/to/pascal_plus_data/prepared>
 ```
 
 
