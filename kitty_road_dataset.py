@@ -40,7 +40,7 @@ TRAIN_SHARE = 0.8
 parser = argparse.ArgumentParser()
 
 parser.add_argument(
-    '--data_dir', type=str, default='/tmp/kitty_road_data/',
+    '--data-dir', type=str, default='/tmp/kitty_road_data/',
     help='Directory where the data is located')
 
 
@@ -94,7 +94,7 @@ class KittyRoadDataset(Dataset):
         split_samples = int(train_size * len(basenames))
         train_basenames = basenames[:split_samples]
         test_basenames = basenames[split_samples:]
-        print(len(train_basenames), 'training samples and', len(test_basenames), 'test samples')
+        print('Split', len(train_basenames), 'training samples and', len(test_basenames), 'test samples')
         assert len(basenames) == len(train_basenames)+len(test_basenames)
         return train_basenames, test_basenames
 
@@ -305,4 +305,4 @@ def main(_):
 
 if __name__ == '__main__':
     FLAGS, unparsed = parser.parse_known_args()
-    tf.app.run(argv=[sys.argv[0]] + unparsed)
+    tf.compat.v1.app.run(argv=[sys.argv[0]] + unparsed)

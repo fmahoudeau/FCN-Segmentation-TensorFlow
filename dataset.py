@@ -56,7 +56,7 @@ class Dataset(object):
         def _bytes_feature(value):
             return tf.train.Feature(bytes_list=tf.train.BytesList(value=[value]))
 
-        with tf.python_io.TFRecordWriter(filename) as writer:
+        with tf.io.TFRecordWriter(filename) as writer:
             for im, gt, shape in list(zip(im_set, gt_set, shape_set)):
                 example = tf.train.Example(
                     features=tf.train.Features(

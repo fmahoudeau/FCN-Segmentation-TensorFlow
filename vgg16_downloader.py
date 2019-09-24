@@ -27,7 +27,7 @@ DATA_URL = 'https://www.cs.toronto.edu/~frossard/vgg16/vgg16_weights.npz'
 parser = argparse.ArgumentParser()
 
 parser.add_argument(
-    '--data_dir', type=str, default='/tmp/vgg16/',
+    '--data-dir', type=str, default='/tmp/vgg16/',
     help='Directory to download the zip archive')
 
 
@@ -66,4 +66,4 @@ def main(_):
 
 if __name__ == '__main__':
     FLAGS, unparsed = parser.parse_known_args()
-    tf.app.run(argv=[sys.argv[0]] + unparsed)
+    tf.compat.v1.app.run(argv=[sys.argv[0]] + unparsed)

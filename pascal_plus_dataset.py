@@ -16,7 +16,7 @@
 from scipy.io import loadmat
 import os, os.path
 import numpy as np
-from scipy.misc import imsave
+#from scipy.misc import imsave
 from tqdm import *
 import argparse
 from distutils.dir_util import copy_tree
