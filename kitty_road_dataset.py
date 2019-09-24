@@ -174,13 +174,13 @@ class KittyRoadDataset(Dataset):
             shape: list of float Tensors describing the image shape: [height, width, channels].
         """
         keys_to_features = {
-            'height': tf.FixedLenFeature([1], tf.int64),
-            'width': tf.FixedLenFeature([1], tf.int64),
-            'depth': tf.FixedLenFeature([1], tf.int64),
-            'image_raw': tf.FixedLenFeature([], tf.string),
-            'label_raw': tf.FixedLenFeature([], tf.string)
+            'height': tf.io.FixedLenFeature([1], tf.int64),
+            'width': tf.io.FixedLenFeature([1], tf.int64),
+            'depth': tf.io.FixedLenFeature([1], tf.int64),
+            'image_raw': tf.io.FixedLenFeature([], tf.string),
+            'label_raw': tf.io.FixedLenFeature([], tf.string)
         }
-        parsed = tf.parse_single_example(record_serialized, keys_to_features)
+        parsed = tf.io.parse_single_example(serialized=record_serialized, features=keys_to_features)
 
         # Decode raw data
         height = tf.cast(parsed["height"][0], tf.int64)
@@ -192,9 +192,9 @@ class KittyRoadDataset(Dataset):
         # Perform additional pre-processing
         gt = tf.expand_dims(gt, -1)  # Append channel axis
         gt = tf.expand_dims(gt, 0)  # Insert batch axis
-        im = tf.image.resize_bilinear(im, self.image_shape)  # Returns a float32 type
+        im = tf.image.resize(im, self.image_shape, method=tf.image.ResizeMethod.BILINEAR)  # Returns a float32 type
         im = tf.cast(im, tf.uint8)
-        gt = tf.image.resize_nearest_neighbor(gt, self.image_shape)
+        gt = tf.image.resize(gt, self.image_shape, method=tf.image.ResizeMethod.NEAREST_NEIGHBOR)
         # For future use
         # imgt = tf.stack([im, gt], 0)
         # imgt = tf.image.random_flip_left_right(imgt)
@@ -216,9 +216,24 @@ class KittyRoadDataset(Dataset):
         dataset = dataset.map(self.parse_record)
 
         if is_training:
-            dataset = dataset.map(lambda im, gt, _: tuple(tf.py_func(self.transform_record,
-                                                                     [im, gt],
-                                                                     [im.dtype, tf.uint8])))
+            """
+            WARNING:tensorflow:From /home/fanos/PycharmProjects/TF2FCN/kitty_road_dataset.py:221: 
+            py_func (from tensorflow.python.ops.script_ops) is deprecated and will be removed in a future version.
+            Instructions for updating:
+            tf.py_func is deprecated in TF V2. Instead, there are two
+                options available in V2.
+                - tf.py_function takes a python function which manipulates tf eager
+                tensors instead of numpy arrays. It's easy to convert a tf eager tensor to
+                an ndarray (just call tensor.numpy()) but having access to eager tensors
+                means `tf.py_function`s can use accelerators such as GPUs as well as
+                being differentiable using a gradient tape.
+                - tf.numpy_function maintains the semantics of the deprecated tf.py_func
+                (it is not differentiable, and manipulates numpy arrays). It drops the
+                stateful argument making all functions stateful.            
+            """
+            dataset = dataset.map(lambda im, gt, _: tuple(tf.compat.v1.numpy_function(self.transform_record,
+                                                                                      [im, gt],
+                                                                                      [im.dtype, tf.uint8])))
             dataset = dataset.shuffle(self.n_images['train'])
         # Remove the shape parameter. It is only needed at prediction time to reshape the logits before masking.
         else:
@@ -239,7 +254,7 @@ class KittyRoadDataset(Dataset):
         if not os.path.exists(dataset_filepath):
             raise ValueError('File not found: {}'.format(dataset_filepath))
 
-        sess = tf.get_default_session()
+        sess = tf.compat.v1.get_default_session()
 
         # Make the folder to save the predictions
         output_path = os.path.join(save_path, datetime.now().isoformat().split('.')[0]).split(':')
@@ -253,7 +268,7 @@ class KittyRoadDataset(Dataset):
         dataset = tf.data.TFRecordDataset(dataset_filepath)
         dataset = dataset.map(self.parse_record)
         dataset = dataset.batch(batch_size)
-        iterator = dataset.make_one_shot_iterator()
+        iterator = tf.compat.v1.data.make_one_shot_iterator(dataset)
         next_sample = iterator.get_next()
 
         idx = 0  # The image name is it's index in the TFRecordDataset

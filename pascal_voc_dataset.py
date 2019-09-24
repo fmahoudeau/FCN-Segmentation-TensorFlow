@@ -193,7 +193,7 @@ class PascalVOC2012Dataset(Dataset):
         def _bytes_feature(value):
             return tf.train.Feature(bytes_list=tf.train.BytesList(value=[value]))
 
-        with tf.python_io.TFRecordWriter(filename) as writer:
+        with tf.io.TFRecordWriter(filename) as writer:
             for im, gt, shape in list(zip(im_set, gt_set, shape_set)):
                 example = tf.train.Example(
                     features=tf.train.Features(
@@ -226,13 +226,13 @@ class PascalVOC2012Dataset(Dataset):
             shape: list of float Tensors describing the image shape: [height, width, channels].
         """
         keys_to_features = {
-            'height': tf.FixedLenFeature([1], tf.int64),
-            'width': tf.FixedLenFeature([1], tf.int64),
-            'depth': tf.FixedLenFeature([1], tf.int64),
-            'image_raw': tf.FixedLenFeature([], tf.string),
-            'label_raw': tf.FixedLenFeature([], tf.string)
+            'height': tf.io.FixedLenFeature([1], tf.int64),
+            'width': tf.io.FixedLenFeature([1], tf.int64),
+            'depth': tf.io.FixedLenFeature([1], tf.int64),
+            'image_raw': tf.io.FixedLenFeature([], tf.string),
+            'label_raw': tf.io.FixedLenFeature([], tf.string)
         }
-        parsed = tf.parse_single_example(record_serialized, keys_to_features)
+        parsed = tf.io.parse_single_example(serialized=record_serialized, features=keys_to_features)
 
         # Decode the raw data
         im = tf.image.decode_png(parsed['image_raw'])
@@ -266,12 +266,12 @@ class PascalVOC2012Dataset(Dataset):
         dataset = dataset.map(self.parse_record)
 
         if is_training:
-            dataset = dataset.map(lambda im, gt, _: tuple(tf.py_func(self.transform_record,
+            dataset = dataset.map(lambda im, gt, _: tuple(tf.compat.v1.py_func(self.transform_record,
                                                                      [im, gt],
                                                                      [im.dtype, tf.uint8])))
             dataset = dataset.shuffle(self.n_images['train'])
         else:
-            dataset = dataset.map(lambda im, gt, _: tuple(tf.py_func(self.pad_record,
+            dataset = dataset.map(lambda im, gt, _: tuple(tf.compat.v1.py_func(self.pad_record,
                                                                      [im, gt],
                                                                      [im.dtype, tf.uint8])))
 
@@ -290,7 +290,7 @@ class PascalVOC2012Dataset(Dataset):
         if not os.path.exists(dataset_filepath):
             raise ValueError('File not found: {}'.format(dataset_filepath))
 
-        sess = tf.get_default_session()
+        sess = tf.compat.v1.get_default_session()
 
         # Make the folder to save the predictions
         output_path = os.path.join(save_path, datetime.now().isoformat().split('.')[0]).split(':')
@@ -304,9 +304,9 @@ class PascalVOC2012Dataset(Dataset):
         dataset = tf.data.TFRecordDataset(dataset_filepath)
         dataset = dataset.map(self.parse_record)
         dataset = dataset.map(
-            lambda im, gt, shape: tuple(tf.py_func(self.pad_record, [im, gt, shape], [im.dtype, tf.uint8, tf.int64])))
+            lambda im, gt, shape: tuple(tf.compat.v1.py_func(self.pad_record, [im, gt, shape], [im.dtype, tf.uint8, tf.int64])))
         dataset = dataset.batch(batch_size)
-        iterator = dataset.make_one_shot_iterator()
+        iterator = tf.compat.v1.data.make_one_shot_iterator(dataset)
         next_sample = iterator.get_next()
 
         idx = 0  # The image name is it's index in the TFRecordDataset
@@ -357,5 +357,5 @@ def main(_):
 
 if __name__ == '__main__':
     FLAGS, unparsed = parser.parse_known_args()
-    tf.app.run(argv=[sys.argv[0]] + unparsed)
+    tf.compat.v1.app.run(argv=[sys.argv[0]] + unparsed)
 

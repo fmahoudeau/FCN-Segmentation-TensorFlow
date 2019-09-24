@@ -27,7 +27,7 @@ from image_utils import (imread, imwrite, bytesread,
 
 
 class Dataset(object):
-    """Dataset class for CamVid."""
+    """Dataset base class."""
 
     def __init__(self, augmentation_params):
         self.augmentation_params = augmentation_params

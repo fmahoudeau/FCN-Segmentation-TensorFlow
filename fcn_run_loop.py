@@ -130,9 +130,9 @@ def clear_session():
     :return: A newly created interactive session
     """
     ops.reset_default_graph()
-    if tf.get_default_session() is not None:
-        tf.get_default_session().close()
-    sess = tf.InteractiveSession(config=tf.ConfigProto(intra_op_parallelism_threads=4))
+    if tf.compat.v1.get_default_session() is not None:
+        tf.compat.v1.get_default_session().close()
+    sess = tf.compat.v1.InteractiveSession(config=tf.compat.v1.ConfigProto(intra_op_parallelism_threads=4))
     sess.as_default()
     return sess
 
@@ -168,7 +168,7 @@ def learning_rate_with_exp_decay(batch_size, n_images, decay_epochs, decay_rate=
 
     def learning_rate_fn():
         if decay_rate > 0:
-            lr = tf.train.exponential_decay(base_lr, global_step, n_batches * decay_epochs,
+            lr = tf.compat.v1.train.exponential_decay(base_lr, global_step, n_batches * decay_epochs,
                                             decay_rate, staircase=staircase, name='exp_decay')
         else:
             lr = tf.constant(base_lr, name='constant_lr')
@@ -209,14 +209,14 @@ def compile_model(model, metrics, learning_rate_fn, ignore_label=True, **kwargs)
     # The void class is assumed to be last label in the color map
     if ignore_label:
         # Pixel mask vector, 1=keep, 0=ignore. Vector dim = batch_size * num_pixels
-        ignore_pixels = tf.stop_gradient(tf.subtract(tf.ones((tf.shape(logits)[0],)),
+        ignore_pixels = tf.stop_gradient(tf.subtract(tf.ones((tf.shape(input=logits)[0],)),
                                                      tf.cast(tf.reshape(tf.equal(model.labels,
                                                                                  tf.constant(model.n_classes,
                                                                                              dtype=tf.float32)),
                                                                         [-1]),
                                                              dtype=tf.float32)))
 
-        loss = tf.losses.compute_weighted_loss(
+        loss = tf.compat.v1.losses.compute_weighted_loss(
             weights=ignore_pixels,
             losses=tf.nn.sparse_softmax_cross_entropy_with_logits(labels=tf.cast(labels, tf.int32),
                                                                   logits=logits, name="cross_entropy"))
@@ -224,7 +224,7 @@ def compile_model(model, metrics, learning_rate_fn, ignore_label=True, **kwargs)
     else:
         cross_entropy = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=tf.cast(labels, tf.int32),
                                                                        logits=logits)
-        loss = tf.reduce_mean(cross_entropy, name="cross_entropy")
+        loss = tf.reduce_mean(input_tensor=cross_entropy, name="cross_entropy")
 
     learning_rate = learning_rate_fn()
 
@@ -240,11 +240,11 @@ def compile_model(model, metrics, learning_rate_fn, ignore_label=True, **kwargs)
                 if FLAGS.debug:
                     print('Adam optimizer with weight decay = {}'.format(kwargs['weight_decay']))
             else:
-                opt = tf.train.AdamOptimizer(learning_rate=learning_rate)
+                opt = tf.compat.v1.train.AdamOptimizer(learning_rate=learning_rate)
                 if FLAGS.debug:
                     print('Adam optimizer w/o weight decay')
         else:
-            opt = tf.train.AdamOptimizer(learning_rate=learning_rate)
+            opt = tf.compat.v1.train.AdamOptimizer(learning_rate=learning_rate)
             if FLAGS.debug:
                 print('Adam optimizer w/o weight decay')
     elif FLAGS.optimizer.lower() == 'sgd':
@@ -260,13 +260,13 @@ def compile_model(model, metrics, learning_rate_fn, ignore_label=True, **kwargs)
                     print('SGD optimizer: weight_decay={}, momentum={}, nestorov={}'.format(
                         kwargs['weight_decay'], momentum, nesterov))
             else:
-                opt = tf.train.MomentumOptimizer(learning_rate=learning_rate,
+                opt = tf.compat.v1.train.MomentumOptimizer(learning_rate=learning_rate,
                                                  momentum=momentum,
                                                  use_nesterov=nesterov)
                 if FLAGS.debug:
                     print('SGD optimizer: momentum={}, nestorov={}'.format(momentum, nesterov))
         else:
-            opt = tf.train.MomentumOptimizer(learning_rate=learning_rate,
+            opt = tf.compat.v1.train.MomentumOptimizer(learning_rate=learning_rate,
                                              momentum=momentum,
                                              use_nesterov=nesterov)
             if FLAGS.debug:
@@ -285,26 +285,26 @@ def compile_model(model, metrics, learning_rate_fn, ignore_label=True, **kwargs)
             grads_and_vars_mult.append((grad, var))
         train_op = opt.apply_gradients(grads_and_vars_mult, global_step=global_step, name="train_op")
     else:"""
-    train_op = opt.minimize(loss, global_step=tf.train.get_global_step(), name="train_op")
+    train_op = opt.minimize(loss, global_step=tf.compat.v1.train.get_global_step(), name="train_op")
 
     # Create metrics
     tf_metrics = {}
-    predictions = tf.argmax(logits, 1, name="predictions")  # The vector of predicted labels
+    predictions = tf.argmax(input=logits, axis=1, name="predictions")  # The vector of predicted labels
     if 'acc' in metrics:  # Pixel accuracy
-        tf_metrics['acc'] = tf.metrics.accuracy(labels, predictions,
+        tf_metrics['acc'] = tf.compat.v1.metrics.accuracy(labels, predictions,
                                                 weights=ignore_pixels if ignore_label else None, name='acc')
     if 'mean_acc' in metrics:  # Mean class pixel accuracy
-        tf_metrics['mean_acc'] = tf.metrics.mean_per_class_accuracy(labels, predictions, model.n_classes+1,
+        tf_metrics['mean_acc'] = tf.compat.v1.metrics.mean_per_class_accuracy(labels, predictions, model.n_classes+1,
                                                                     weights=ignore_pixels if ignore_label else None,
                                                                     name='mean_acc')
     if 'mean_iou' in metrics:  # Mean Intersection-over-Union (mIoU)
-        tf_metrics['mean_iou'] = tf.metrics.mean_iou(labels, predictions, model.n_classes+1,
+        tf_metrics['mean_iou'] = tf.compat.v1.metrics.mean_iou(labels, predictions, model.n_classes+1,
                                                      weights=ignore_pixels if ignore_label else None,
                                                      name='mean_iou')
 
-    sess = tf.get_default_session()
-    sess.run(tf.global_variables_initializer())
-    sess.run(tf.local_variables_initializer())
+    sess = tf.compat.v1.get_default_session()
+    sess.run(tf.compat.v1.global_variables_initializer())
+    sess.run(tf.compat.v1.local_variables_initializer())
     model.logits = logits
     model.opt = opt
     model.train_op = train_op
@@ -338,7 +338,7 @@ def fit_model(model, epochs, batch_size, dataset_train, dataset_val, model_name,
         performing additional training.
     :return: None
     """
-    sess = tf.get_default_session()
+    sess = tf.compat.v1.get_default_session()
 
     # TODO: Preserve these lists across multiple calls to this function.
     training_loss, validation_loss = [], []
@@ -356,19 +356,19 @@ def fit_model(model, epochs, batch_size, dataset_train, dataset_val, model_name,
     # Isolate the variables stored behind the scenes by the metrics operation
     metrics_vars = []
     for metric in list(model.metrics.keys()):
-        metrics_vars.append(tf.get_collection(tf.GraphKeys.LOCAL_VARIABLES, scope=metric))
+        metrics_vars.append(tf.compat.v1.get_collection(tf.compat.v1.GraphKeys.LOCAL_VARIABLES, scope=metric))
         training_metrics[metric] = []
         validation_metrics[metric] = []
     metrics_vars = list(itertools.chain.from_iterable(metrics_vars))  # Flatten list of lists
 
     # Define initializer to initialize/reset metrics variable(s)
-    metrics_vars_initializer = tf.variables_initializer(var_list=metrics_vars)
+    metrics_vars_initializer = tf.compat.v1.variables_initializer(var_list=metrics_vars)
 
     # A reinitializable iterator is defined by its structure. We could use the
     # `output_types` and `output_shapes` properties of either `training_dataset`
     # or `validation_dataset` here, because they are compatible.
-    iterator = tf.data.Iterator.from_structure(dataset_train.output_types,
-                                               dataset_train.output_shapes)
+    iterator = tf.compat.v1.data.Iterator.from_structure(tf.compat.v1.data.get_output_types(dataset_train),
+                                                         tf.compat.v1.data.get_output_shapes(dataset_train))
     next_batch = iterator.get_next()
 
     train_init_op = iterator.make_initializer(dataset_train)
@@ -393,7 +393,7 @@ def fit_model(model, epochs, batch_size, dataset_train, dataset_val, model_name,
                 res = sess.run({**{"loss": [model.loss, model.train_op]}, **model.metrics},
                                feed_dict={model.inputs: im_batch,
                                           model.labels: gt_batch,
-                                          model.keep_prob: FLAGS.dropout_rate})
+                                          model.dropout_rate: FLAGS.dropout_rate})
                 training_loss[-1] += res["loss"][0]
                 n_batches += 1
             except tf.errors.OutOfRangeError:
@@ -436,7 +436,7 @@ def fit_model(model, epochs, batch_size, dataset_train, dataset_val, model_name,
                     res = sess.run({**{"loss": model.loss}, **model.metrics},
                                    feed_dict={model.inputs: im_batch,
                                               model.labels: gt_batch,
-                                              model.keep_prob: 1.0})
+                                              model.dropout_rate: 0.0})
                     validation_loss[-1] += res["loss"]
                     n_batches += 1
                 except tf.errors.OutOfRangeError:
@@ -486,12 +486,6 @@ def fit_model(model, epochs, batch_size, dataset_train, dataset_val, model_name,
                 model.save_variables(os.path.join(FLAGS.save_dir, model_name), global_step=epoch+1)
             best_loss = current_loss
         print()
-
-
-def staged_training():
-    """This method will likely remain un-implemented given the
-    lower performance of models trained in stages."""
-    pass
 
 
 def oneoff_training(fcn_version, dataset_name, dataset_path, metrics, model_name, saved_variables=None):
@@ -546,7 +540,7 @@ def oneoff_training(fcn_version, dataset_name, dataset_path, metrics, model_name
 
     # Train the model
     fit_model(model, FLAGS.n_epochs, FLAGS.batch_size, dataset_train, dataset_val, model_name)
-    print("Total steps = {}".format(tf.train.global_step(sess, tf.train.get_global_step())))
+    print("Total steps = {}".format(tf.compat.v1.train.global_step(sess, tf.compat.v1.train.get_global_step())))
     return model, (dataset_train, dataset_val)
 
 
@@ -598,7 +592,7 @@ def evaluate_model(fcn_version, dataset_name, dataset_path, metrics, saved_varia
     # Evaluate the model
     validation_loss = 0
     n_batches = 0
-    iterator = tf.data.Iterator.from_structure(dataset_val.output_types,
+    iterator = tf.compat.v1.data.Iterator.from_structure(dataset_val.output_types,
                                                dataset_val.output_shapes)
     next_batch = iterator.get_next()
 
@@ -727,7 +721,7 @@ def main(_):
 
 
 if __name__ == '__main__':
-    tf.logging.set_verbosity(tf.logging.INFO)
+    tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.INFO)
     FLAGS, unparsed = parser.parse_known_args()
     FLAGS.augmentation_params = {'saturation_range': (-20, 20), 'value_range': (-20, 20),
                                  'brightness_range': None, 'contrast_range': None, 'blur_params': None,
@@ -735,4 +729,4 @@ if __name__ == '__main__':
                                  'zoom_range': (0.5, 2.0), 'ignore_label': 21}
     FLAGS.dropout_rate = 0.5
     FLAGS.metrics = ['acc', 'mean_acc', 'mean_iou']
-    tf.app.run(argv=[sys.argv[0]] + unparsed)
+    tf.compat.v1.app.run(argv=[sys.argv[0]] + unparsed)

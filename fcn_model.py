@@ -50,7 +50,7 @@ def _bilinear_initializer(n_channels, kernel_size, cross_channel=False):
         for i in range(n_channels):
             weights[:, :, i, i] = bilinear
 
-    return tf.constant_initializer(value=weights, dtype=tf.float32)
+    return tf.compat.v1.constant_initializer(value=weights)
 
 
 class Model(object):
@@ -85,8 +85,8 @@ class Model(object):
 
         :return: None
         """
-        builder = tf.saved_model.Builder(model_path)
-        builder.add_meta_graph_and_variables(tf.get_default_session(), tags)
+        builder = tf.compat.v1.saved_model.Builder(model_path)
+        builder.add_meta_graph_and_variables(tf.compat.v1.get_default_session(), tags)
         builder.save()
 
     def load_protobuf(self, model_path, tags):
@@ -103,7 +103,7 @@ class Model(object):
         if not os.path.exists(model_path):
             raise ValueError('Folder not found: {}'.format(model_path))
 
-        model = tf.saved_model.loader.load(tf.get_default_session(), tags, model_path)
+        model = tf.compat.v1.saved_model.loader.load(tf.compat.v1.get_default_session(), tags, model_path)
         return model
 
     def save_variables(self, variables_filename, global_step):
@@ -116,9 +116,9 @@ class Model(object):
         :return: None
         """
         if self.saver is None:
-            self.saver = tf.train.Saver(max_to_keep=3)
+            self.saver = tf.compat.v1.train.Saver(max_to_keep=3)
         # Note that the meta graph could also be saved if we wanted to
-        self.saver.save(tf.get_default_session(), variables_filename, global_step=global_step, write_meta_graph=False)
+        self.saver.save(tf.compat.v1.get_default_session(), variables_filename, global_step=global_step, write_meta_graph=False)
 
     def load_variables(self, variables_filename):
         """
@@ -135,8 +135,8 @@ class Model(object):
         # Do not use the same saver object for both loading and saving.
         # Any new variables added to the graph after loading won't be saved properly.
         # Therefore the class saver is reserved for saving actions only.
-        saver = tf.train.Saver(max_to_keep=3)
-        saver.restore(tf.get_default_session(), variables_filename)
+        saver = tf.compat.v1.train.Saver(max_to_keep=3)
+        saver.restore(tf.compat.v1.get_default_session(), variables_filename)
 
     def __call__(self, model_name, saved_model=None, saved_variables=None):
         """
@@ -158,9 +158,9 @@ class Model(object):
         # pre-trained weights in case of staged training of respectively FCN16/FCN8.
         if saved_model is None:
             print('Building {} model...'.format(model_name))
-            self.inputs = tf.placeholder(tf.float32, [None, *self.image_shape, 3], name='inputs')
-            self.labels = tf.placeholder(tf.float32, [None, *self.image_shape], name='labels')
-            self.keep_prob = tf.placeholder(tf.float32, shape=[], name='keep_prob')
+            self.inputs = tf.compat.v1.placeholder(tf.float32, [None, *self.image_shape, 3], name='inputs')
+            self.labels = tf.compat.v1.placeholder(tf.float32, [None, *self.image_shape], name='labels')
+            self.dropout_rate = tf.compat.v1.placeholder(tf.float32, shape=[], name='rate')
             self._fcn_base()
             if model_name == 'FCN32':
                 self.outputs = self._fcn_32()
@@ -186,12 +186,12 @@ class Model(object):
 
             self.load_protobuf(**saved_model)
             # Retrieve key tensors from the graph.
-            graph = tf.get_default_graph()
+            graph = tf.compat.v1.get_default_graph()
             self.inputs = graph.get_tensor_by_name('inputs:0')
             self.labels = graph.get_tensor_by_name('labels:0')
-            self.keep_prob = graph.get_tensor_by_name('keep_prob:0')
+            self.dropout_rate = graph.get_tensor_by_name('rate:0')
             self.fcn32_out = graph.get_tensor_by_name('fcn32_out:0')
-            self.logits = tf.get_default_graph().get_tensor_by_name('logits:0')
+            self.logits = tf.compat.v1.get_default_graph().get_tensor_by_name('logits:0')
             if 'FCN32' in saved_model['tags']:
                 self.outputs = self.fcn32_out
             elif 'FCN16' in saved_model['tags']:
@@ -220,155 +220,155 @@ class Model(object):
         weights = np.load(self.vgg16_weights_path)
 
         # Subtract the mean RGB value, computed on the VGG16 training set, from each pixel
-        with tf.name_scope('preprocess') as scope:
+        with tf.compat.v1.name_scope('preprocess') as scope:
             mean = tf.constant([123.68, 116.779, 103.939], dtype=tf.float32,
                                shape=[1, 1, 1, 3], name='img_mean')
             images = self.inputs - mean
 
         # Block 1
-        with tf.name_scope('conv1_1') as scope:
+        with tf.compat.v1.name_scope('conv1_1') as scope:
             kernel = tf.Variable(weights['conv1_1_W'], name='weights', dtype=tf.float32, expected_shape=[3, 3, 3, 64])
-            conv = tf.nn.conv2d(images, kernel, [1, 1, 1, 1], padding='SAME')
+            conv = tf.nn.conv2d(input=images, filters=kernel, strides=[1, 1, 1, 1], padding='SAME')
             bias = tf.Variable(weights['conv1_1_b'], name='biases', dtype=tf.float32, expected_shape=[64])
             out = tf.nn.bias_add(conv, bias)
             self.conv1_1 = tf.nn.relu(out, name=scope)
 
-        with tf.name_scope('conv1_2') as scope:
+        with tf.compat.v1.name_scope('conv1_2') as scope:
             kernel = tf.Variable(weights['conv1_2_W'], name='weights', dtype=tf.float32, expected_shape=[3, 3, 64, 64])
-            conv = tf.nn.conv2d(self.conv1_1, kernel, [1, 1, 1, 1], padding='SAME')
+            conv = tf.nn.conv2d(input=self.conv1_1, filters=kernel, strides=[1, 1, 1, 1], padding='SAME')
             bias = tf.Variable(weights['conv1_2_b'], name='biases', dtype=tf.float32, expected_shape=[64])
             out = tf.nn.bias_add(conv, bias)
             self.conv1_2 = tf.nn.relu(out, name=scope)
 
-        self.pool1 = tf.nn.max_pool(self.conv1_2, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1],
+        self.pool1 = tf.nn.max_pool2d(input=self.conv1_2, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1],
                                     padding='SAME', name='pool1')
 
         # Block 2
-        with tf.name_scope('conv2_1') as scope:
+        with tf.compat.v1.name_scope('conv2_1') as scope:
             kernel = tf.Variable(weights['conv2_1_W'], name='weights', dtype=tf.float32, expected_shape=[3, 3, 64, 128])
-            conv = tf.nn.conv2d(self.pool1, kernel, [1, 1, 1, 1], padding='SAME')
+            conv = tf.nn.conv2d(input=self.pool1, filters=kernel, strides=[1, 1, 1, 1], padding='SAME')
             bias = tf.Variable(weights['conv2_1_b'], name='biases', dtype=tf.float32, expected_shape=[128])
             out = tf.nn.bias_add(conv, bias)
             self.conv2_1 = tf.nn.relu(out, name=scope)
 
-        with tf.name_scope('conv2_2') as scope:
+        with tf.compat.v1.name_scope('conv2_2') as scope:
             kernel = tf.Variable(weights['conv2_2_W'], name='weights', dtype=tf.float32,
                                  expected_shape=[3, 3, 128, 128])
-            conv = tf.nn.conv2d(self.conv2_1, kernel, [1, 1, 1, 1], padding='SAME')
+            conv = tf.nn.conv2d(input=self.conv2_1, filters=kernel, strides=[1, 1, 1, 1], padding='SAME')
             bias = tf.Variable(weights['conv2_2_b'], name='biases', dtype=tf.float32, expected_shape=[128])
             out = tf.nn.bias_add(conv, bias)
             self.conv2_2 = tf.nn.relu(out, name=scope)
 
-        self.pool2 = tf.nn.max_pool(self.conv2_2, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1],
+        self.pool2 = tf.nn.max_pool2d(input=self.conv2_2, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1],
                                     padding='SAME', name='pool2')
 
         # Block 3
-        with tf.name_scope('conv3_1') as scope:
+        with tf.compat.v1.name_scope('conv3_1') as scope:
             kernel = tf.Variable(weights['conv3_1_W'], name='weights', dtype=tf.float32,
                                  expected_shape=[3, 3, 128, 256])
-            conv = tf.nn.conv2d(self.pool2, kernel, [1, 1, 1, 1], padding='SAME')
+            conv = tf.nn.conv2d(input=self.pool2, filters=kernel, strides=[1, 1, 1, 1], padding='SAME')
             bias = tf.Variable(weights['conv3_1_b'], name='biases', dtype=tf.float32, expected_shape=[256])
             out = tf.nn.bias_add(conv, bias)
             self.conv3_1 = tf.nn.relu(out, name=scope)
 
-        with tf.name_scope('conv3_2') as scope:
+        with tf.compat.v1.name_scope('conv3_2') as scope:
             kernel = tf.Variable(weights['conv3_2_W'], name='weights', dtype=tf.float32,
                                  expected_shape=[3, 3, 256, 256])
-            conv = tf.nn.conv2d(self.conv3_1, kernel, [1, 1, 1, 1], padding='SAME')
+            conv = tf.nn.conv2d(input=self.conv3_1, filters=kernel, strides=[1, 1, 1, 1], padding='SAME')
             bias = tf.Variable(weights['conv3_2_b'], name='biases', dtype=tf.float32, expected_shape=[256])
             out = tf.nn.bias_add(conv, bias)
             self.conv3_2 = tf.nn.relu(out, name=scope)
 
-        with tf.name_scope('conv3_3') as scope:
+        with tf.compat.v1.name_scope('conv3_3') as scope:
             kernel = tf.Variable(weights['conv3_3_W'], name='weights', dtype=tf.float32,
                                  expected_shape=[3, 3, 256, 256])
-            conv = tf.nn.conv2d(self.conv3_2, kernel, [1, 1, 1, 1], padding='SAME')
+            conv = tf.nn.conv2d(input=self.conv3_2, filters=kernel, strides=[1, 1, 1, 1], padding='SAME')
             bias = tf.Variable(weights['conv3_3_b'], name='biases', dtype=tf.float32, expected_shape=[256])
             out = tf.nn.bias_add(conv, bias)
             self.conv3_3 = tf.nn.relu(out, name=scope)
 
-        self.pool3 = tf.nn.max_pool(self.conv3_3, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1],
+        self.pool3 = tf.nn.max_pool2d(input=self.conv3_3, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1],
                                     padding='SAME', name='pool3')
         self.layer3_out = tf.identity(self.pool3, name='layer3_out')
 
         # Block 4
-        with tf.name_scope('conv4_1') as scope:
+        with tf.compat.v1.name_scope('conv4_1') as scope:
             kernel = tf.Variable(weights['conv4_1_W'], name='weights', dtype=tf.float32,
                                  expected_shape=[3, 3, 256, 512])
-            conv = tf.nn.conv2d(self.pool3, kernel, [1, 1, 1, 1], padding='SAME')
+            conv = tf.nn.conv2d(input=self.pool3, filters=kernel, strides=[1, 1, 1, 1], padding='SAME')
             bias = tf.Variable(weights['conv4_1_b'], name='biases', dtype=tf.float32, expected_shape=[512])
             out = tf.nn.bias_add(conv, bias)
             self.conv4_1 = tf.nn.relu(out, name=scope)
 
-        with tf.name_scope('conv4_2') as scope:
+        with tf.compat.v1.name_scope('conv4_2') as scope:
             kernel = tf.Variable(weights['conv4_2_W'], name='weights', dtype=tf.float32,
                                  expected_shape=[3, 3, 512, 512])
-            conv = tf.nn.conv2d(self.conv4_1, kernel, [1, 1, 1, 1], padding='SAME')
+            conv = tf.nn.conv2d(input=self.conv4_1, filters=kernel, strides=[1, 1, 1, 1], padding='SAME')
             bias = tf.Variable(weights['conv4_2_b'], name='biases', dtype=tf.float32, expected_shape=[512])
             out = tf.nn.bias_add(conv, bias)
             self.conv4_2 = tf.nn.relu(out, name=scope)
 
-        with tf.name_scope('conv4_3') as scope:
+        with tf.compat.v1.name_scope('conv4_3') as scope:
             kernel = tf.Variable(weights['conv4_3_W'], name='weights', dtype=tf.float32,
                                  expected_shape=[3, 3, 512, 512])
-            conv = tf.nn.conv2d(self.conv4_2, kernel, [1, 1, 1, 1], padding='SAME')
+            conv = tf.nn.conv2d(input=self.conv4_2, filters=kernel, strides=[1, 1, 1, 1], padding='SAME')
             bias = tf.Variable(weights['conv4_3_b'], name='biases', dtype=tf.float32, expected_shape=[512])
             out = tf.nn.bias_add(conv, bias)
             self.conv4_3 = tf.nn.relu(out, name=scope)
 
-        self.pool4 = tf.nn.max_pool(self.conv4_3, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1],
+        self.pool4 = tf.nn.max_pool2d(input=self.conv4_3, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1],
                                     padding='SAME', name='pool4')
         self.layer4_out = tf.identity(self.pool4, name='layer4_out')
 
         # Block 5
-        with tf.name_scope('conv5_1') as scope:
+        with tf.compat.v1.name_scope('conv5_1') as scope:
             kernel = tf.Variable(weights['conv5_1_W'], name='weights', dtype=tf.float32,
                                  expected_shape=[3, 3, 512, 512])
-            conv = tf.nn.conv2d(self.pool4, kernel, [1, 1, 1, 1], padding='SAME')
+            conv = tf.nn.conv2d(input=self.pool4, filters=kernel, strides=[1, 1, 1, 1], padding='SAME')
             bias = tf.Variable(weights['conv5_1_b'], name='biases', dtype=tf.float32, expected_shape=[512])
             out = tf.nn.bias_add(conv, bias)
             self.conv5_1 = tf.nn.relu(out, name=scope)
 
-        with tf.name_scope('conv5_2') as scope:
+        with tf.compat.v1.name_scope('conv5_2') as scope:
             kernel = tf.Variable(weights['conv5_2_W'], name='weights', dtype=tf.float32,
                                  expected_shape=[3, 3, 512, 512])
-            conv = tf.nn.conv2d(self.conv5_1, kernel, [1, 1, 1, 1], padding='SAME')
+            conv = tf.nn.conv2d(input=self.conv5_1, filters=kernel, strides=[1, 1, 1, 1], padding='SAME')
             bias = tf.Variable(weights['conv5_2_b'], name='biases', dtype=tf.float32, expected_shape=[512])
             out = tf.nn.bias_add(conv, bias)
             self.conv5_2 = tf.nn.relu(out, name=scope)
 
-        with tf.name_scope('conv5_3') as scope:
+        with tf.compat.v1.name_scope('conv5_3') as scope:
             kernel = tf.Variable(weights['conv5_3_W'], name='weights', dtype=tf.float32,
                                  expected_shape=[3, 3, 512, 512])
-            conv = tf.nn.conv2d(self.conv5_2, kernel, [1, 1, 1, 1], padding='SAME')
+            conv = tf.nn.conv2d(input=self.conv5_2, filters=kernel, strides=[1, 1, 1, 1], padding='SAME')
             bias = tf.Variable(weights['conv5_3_b'], name='biases', dtype=tf.float32, expected_shape=[512])
             out = tf.nn.bias_add(conv, bias)
             self.conv5_3 = tf.nn.relu(out, name=scope)
 
-        self.pool5 = tf.nn.max_pool(self.conv5_3, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1],
+        self.pool5 = tf.nn.max_pool2d(input=self.conv5_3, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1],
                                     padding='SAME', name='pool5')
 
         # Block 6 is a convolutionized version of fc6 with kernel shape (25088, 4096)
-        with tf.name_scope('conv6') as scope:
+        with tf.compat.v1.name_scope('conv6') as scope:
             kernel = tf.Variable(weights['fc6_W'].reshape(7, 7, 512, 4096), name='weights',
                                  dtype=tf.float32, expected_shape=[7, 7, 512, 4096])
-            conv = tf.nn.conv2d(self.pool5, kernel, [1, 1, 1, 1], padding='SAME')
+            conv = tf.nn.conv2d(input=self.pool5, filters=kernel, strides=[1, 1, 1, 1], padding='SAME')
             bias = tf.Variable(weights['fc6_b'], name='biases', dtype=tf.float32, expected_shape=[4096])
             out = tf.nn.bias_add(conv, bias)
             self.conv6 = tf.nn.relu(out, name=scope)
 
-        self.drop1 = tf.nn.dropout(self.conv6, self.keep_prob, name='dropout1')
+        self.drop1 = tf.nn.dropout(self.conv6, name='dropout1', rate=self.dropout_rate)
 
         # Block 7 is a convolutionized version of fc7 with kernel shape (4096, 4096)
-        with tf.name_scope('conv7') as scope:
+        with tf.compat.v1.name_scope('conv7') as scope:
             kernel = tf.Variable(weights['fc7_W'].reshape(1, 1, 4096, 4096), name='weights',
                                  dtype=tf.float32, expected_shape=[1, 1, 4096, 4096])
-            conv = tf.nn.conv2d(self.drop1, kernel, [1, 1, 1, 1], padding='SAME')
+            conv = tf.nn.conv2d(input=self.drop1, filters=kernel, strides=[1, 1, 1, 1], padding='SAME')
             bias = tf.Variable(weights['fc7_b'], name='biases', dtype=tf.float32, expected_shape=[4096])
             out = tf.nn.bias_add(conv, bias)
             self.conv7 = tf.nn.relu(out, name=scope)
 
-        self.drop2 = tf.nn.dropout(self.conv7, self.keep_prob, name='dropout2')
+        self.drop2 = tf.nn.dropout(self.conv7, name='dropout2', rate=self.dropout_rate)
         self.layer7_out = tf.identity(self.drop2, name='layer7_out')
 
     def _fcn_32(self):
@@ -382,11 +382,11 @@ class Model(object):
         :return: The output layer of FCN32.
         """
         # Apply 1x1 convolution to predict classes of layer 7 at stride 32
-        self.conv7_classes = tf.layers.conv2d(self.layer7_out, filters=self.n_classes+1, kernel_size=1,
-                                              kernel_initializer=tf.zeros_initializer(), name="conv7_classes")
+        self.conv7_classes = tf.compat.v1.layers.conv2d(self.layer7_out, filters=self.n_classes+1, kernel_size=1,
+                                              kernel_initializer=tf.compat.v1.zeros_initializer(), name="conv7_classes")
 
         # 32x bilinear interpolation
-        self.fcn32_out = tf.image.resize_bilinear(self.conv7_classes, self.image_shape, name="fcn32_out")
+        self.fcn32_out = tf.image.resize(self.conv7_classes, self.image_shape, name="fcn32_out", method=tf.image.ResizeMethod.BILINEAR)
 
         return self.fcn32_out
 
@@ -404,11 +404,11 @@ class Model(object):
         :return: The output layer of FCN16.
         """
         # Apply 1x1 convolution to predict classes of layer 4 at stride 16
-        self.pool4_classes = tf.layers.conv2d(self.layer4_out, filters=self.n_classes+1, kernel_size=1,
-                                              kernel_initializer=tf.zeros_initializer(), name="pool4_classes")
+        self.pool4_classes = tf.compat.v1.layers.conv2d(self.layer4_out, filters=self.n_classes+1, kernel_size=1,
+                                              kernel_initializer=tf.compat.v1.zeros_initializer(), name="pool4_classes")
 
         # Up-sample (2x) conv7 class predictions to match the size of layer 4
-        self.fcn32_upsampled = tf.layers.conv2d_transpose(self.conv7_classes, filters=self.n_classes+1,
+        self.fcn32_upsampled = tf.compat.v1.layers.conv2d_transpose(self.conv7_classes, filters=self.n_classes+1,
                                                           kernel_size=4, strides=2, padding='SAME', use_bias=False,
                                                           kernel_initializer=_bilinear_initializer(self.n_classes+1, 4),
                                                           name="fcn32_upsampled")
@@ -417,7 +417,7 @@ class Model(object):
         self.skip_1 = tf.add(self.pool4_classes, self.fcn32_upsampled, name="skip_cnx_1")
 
         # 16x bilinear interpolation
-        self.fcn16_out = tf.image.resize_bilinear(self.skip_1, self.image_shape, name="fcn16_out")
+        self.fcn16_out = tf.image.resize(self.skip_1, self.image_shape, name="fcn16_out", method=tf.image.ResizeMethod.BILINEAR)
 
         return self.fcn16_out
 
@@ -435,11 +435,11 @@ class Model(object):
         :return: The output layer of FCN8.
         """
         # Apply 1x1 convolution to predict classes of layer 3 at stride 8
-        self.pool3_classes = tf.layers.conv2d(self.layer3_out, filters=self.n_classes+1, kernel_size=1,
-                                              kernel_initializer=tf.zeros_initializer(), name="pool3_classes")
+        self.pool3_classes = tf.compat.v1.layers.conv2d(self.layer3_out, filters=self.n_classes+1, kernel_size=1,
+                                              kernel_initializer=tf.compat.v1.zeros_initializer(), name="pool3_classes")
 
         # Up-sample (2x) skip_1 class predictions to match the size of layer 3
-        self.fcn16_upsampled = tf.layers.conv2d_transpose(self.skip_1, filters=self.n_classes+1,
+        self.fcn16_upsampled = tf.compat.v1.layers.conv2d_transpose(self.skip_1, filters=self.n_classes+1,
                                                           kernel_size=4, strides=2, padding='SAME', use_bias=False,
                                                           kernel_initializer=_bilinear_initializer(self.n_classes+1, 4),
                                                           name="fcn16_upsampled")
@@ -448,6 +448,6 @@ class Model(object):
         self.skip_2 = tf.add(self.pool3_classes, self.fcn16_upsampled, name="skip_cnx_2")
 
         # 8x bilinear interpolation
-        self.fcn8_out = tf.image.resize_bilinear(self.skip_2, self.image_shape, name="fcn8_out")
+        self.fcn8_out = tf.image.resize(self.skip_2, self.image_shape, name="fcn8_out", method=tf.image.ResizeMethod.BILINEAR)
 
         return self.fcn8_out
